@@ -16,11 +16,18 @@ public class Applicant {
     protected PetOwner petOwner;
 
     protected LocalDate applicationDate;
-    protected Long dogId;
-    protected Long catId;
+
+    @OneToOne
+    @JoinColumn(name = "dog_id")
+    protected Dog dogId;
+
+    @OneToOne
+    @JoinColumn(name = "cat_id")
+    protected Cat catId;
+
     protected String status;
 
-    protected Applicant() {
+    public Applicant() {
     }
 
     private Applicant(Builder builder) {
@@ -44,11 +51,11 @@ public class Applicant {
         return applicationDate;
     }
 
-    public Long getDogId() {
+    public Dog getDogId() {
         return dogId;
     }
 
-    public Long getCatId() {
+    public Cat getCatId() {
         return catId;
     }
 
@@ -89,8 +96,8 @@ public class Applicant {
         private Long id;
         private PetOwner petOwner;
         private LocalDate applicationDate;
-        private Long dogId;
-        private Long catId;
+        private Dog dogId;
+        private Cat catId;
         private String status;
 
         public Builder setId(Long id) {
@@ -108,12 +115,12 @@ public class Applicant {
             return this;
         }
 
-        public Builder setDogId(Long dogId) {
+        public Builder setDogId(Dog dogId) {
             this.dogId = dogId;
             return this;
         }
 
-        public Builder setCatId(Long catId) {
+        public Builder setCatId(Cat catId) {
             this.catId = catId;
             return this;
         }

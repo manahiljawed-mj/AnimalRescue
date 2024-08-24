@@ -16,7 +16,7 @@ public class PetOwner {
     protected String emailAddress;
     protected String streetAddress;
 
-    protected PetOwner() {
+    public PetOwner() {
     }
 
     private PetOwner(Builder builder) {

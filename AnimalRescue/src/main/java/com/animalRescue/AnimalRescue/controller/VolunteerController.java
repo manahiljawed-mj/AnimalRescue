@@ -36,6 +36,6 @@ public class VolunteerController {
 
     @GetMapping("/getall")
     public Set<Volunteer> getAllVolunteers() {
-        return volunteerService.getAll();
+        return volunteerService.getall();
     }
 }

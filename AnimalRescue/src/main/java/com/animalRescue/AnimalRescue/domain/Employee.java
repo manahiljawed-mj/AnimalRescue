@@ -15,7 +15,7 @@ public class Employee {
     protected String contactNo;
     protected String emailAddress;
 
-    protected Employee() {
+    public Employee() {
     }
 
     private Employee(Builder builder) {

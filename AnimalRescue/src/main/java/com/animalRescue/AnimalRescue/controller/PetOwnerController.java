@@ -36,6 +36,6 @@ public class PetOwnerController {
 
     @GetMapping("/getall")
     public Set<PetOwner> getAllPetOwners() {
-        return petOwnerService.getAll();
+        return petOwnerService.getall();
     }
 }

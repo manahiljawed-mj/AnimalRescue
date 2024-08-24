@@ -9,23 +9,43 @@ public class Cat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cat_id")
-    protected long id;
+    protected long catId;
     protected String name;
     protected String breed;
     protected int age;
+    protected String size;
+    protected String gender;
+    protected int cageNumber;
 
-    protected Cat() {
+    public Cat() {
     }
 
     private Cat(Builder builder) {
-        this.id = builder.id;
+        this.catId = builder.catId;
         this.name = builder.name;
-        this.breed = builder.breed;
+        this.size = builder.size;
         this.age = builder.age;
+        this.gender = builder.gender;
+        this.breed = builder.breed;
+        this.cageNumber = builder.cageNumber;
+        
     }
 
-    public long getId() {
-        return id;
+
+    public long getCatId() {
+        return catId;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public int getCageNumber() {
+        return cageNumber;
     }
 
     public String getName() {
@@ -45,57 +65,88 @@ public class Cat {
         if (this == o) return true;
         if (!(o instanceof Cat cat)) return false;
         return getAge() == cat.getAge() &&
-                Objects.equals(getId(), cat.getId()) &&
+                getCageNumber() == cat.getCageNumber() &&
+                Objects.equals(getCatId(), cat.getCatId()) &&
                 Objects.equals(getName(), cat.getName()) &&
+                Objects.equals(getSize(), cat.getSize()) &&
+                Objects.equals(getGender(), cat.getGender()) &&
                 Objects.equals(getBreed(), cat.getBreed());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getBreed(), getAge());
+        return Objects.hash(getCatId(), getName(), getSize(), getAge(), getGender(), getBreed(), getCageNumber());
     }
+
 
     @Override
     public String toString() {
         return "Cat{" +
-                "id=" + id +
+                "catId=" + catId +
                 ", name='" + name + '\'' +
-                ", breed='" + breed + '\'' +
+                ", size='" + size + '\'' +
                 ", age=" + age +
+                ", gender='" + gender + '\'' +
+                ", breed='" + breed + '\'' +
+                ", cageNumber=" + cageNumber +
                 '}';
     }
 
     public static class Builder {
-        protected Long id;
+        protected Long catId;
         protected String name;
-        protected String breed;
+        protected String size;
         protected int age;
+        protected String gender;
+        protected String breed;
+        protected int cageNumber;
 
-        public Builder setId(Long id) {
-            this.id = id;
+        public Builder() {
+        }
+
+        public Cat.Builder setCatId(Long catId) {
+            this.catId = catId;
             return this;
         }
 
-        public Builder setName(String name) {
+        public Cat.Builder setName(String name) {
             this.name = name;
             return this;
         }
 
-        public Builder setBreed(String breed) {
-            this.breed = breed;
+        public Cat.Builder setSize(String size) {
+            this.size = size;
             return this;
         }
 
-        public Builder setAge(int age) {
+        public Cat.Builder setAge(int age) {
             this.age = age;
             return this;
         }
 
-        public Builder copy(Cat c) {
-            this.id = c.getId();
-            this.name = c.getName();
-            this.breed = c.getBreed();
-            this.age = c.getAge();
+        public Cat.Builder setGender(String gender) {
+            this.gender = gender;
+            return this;
+        }
+
+        public Cat.Builder setBreed(String breed) {
+            this.breed = breed;
+            return this;
+        }
+
+        public Cat.Builder setCageNumber(int cageNumber) {
+            this.cageNumber = cageNumber;
+            return this;
+        }
+
+        public Cat.Builder copy(Cat d) {
+            this.catId = d.getCatId();
+            this.name = d.getName();
+            this.size = d.getSize();
+            this.age = d.getAge();
+            this.gender = d.getGender();
+            this.breed = d.getBreed();
+            this.cageNumber = d.getCageNumber();
             return this;
         }
 

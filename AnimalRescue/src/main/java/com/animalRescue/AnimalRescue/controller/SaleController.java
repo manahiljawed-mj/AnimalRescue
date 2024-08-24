@@ -36,6 +36,6 @@ public class SaleController {
 
     @GetMapping("/getall")
     public Set<Sale> getAllSales() {
-        return saleService.getAll();
+        return saleService.getall();
     }
 }

@@ -12,16 +12,13 @@ public class Sale {
     protected Long id;
 
     @ManyToOne
-    @JoinColumn(name = "dog_id")
-    protected Dog dog;
+    @JoinColumn(name = "applicant_id", nullable = false)
+    protected Applicant applicant;
 
     @ManyToOne
-    @JoinColumn(name = "cat_id")
-    protected Cat cat;
+    @JoinColumn(name = "employee_id", nullable = false)
+    protected Employee employee;
 
-    @ManyToOne
-    @JoinColumn(name = "petOwner_id", nullable = false)
-    protected PetOwner petOwner;
 
     protected LocalDate saleDate;
     protected double price;
@@ -31,9 +28,8 @@ public class Sale {
 
     private Sale(Builder builder) {
         this.id = builder.id;
-        this.dog = builder.dog;
-        this.cat = builder.cat;
-        this.petOwner = builder.petOwner;
+        this.applicant=builder.applicant;
+        this.employee=builder.employee;
         this.saleDate = builder.saleDate;
         this.price = builder.price;
     }
@@ -42,16 +38,12 @@ public class Sale {
         return id;
     }
 
-    public Dog getDog() {
-        return dog;
+    public Applicant getApplicant() {
+        return applicant;
     }
 
-    public Cat getCat() {
-        return cat;
-    }
-
-    public PetOwner getPetOwner() {
-        return petOwner;
+    public Employee getEmployee() {
+        return employee;
     }
 
     public LocalDate getSaleDate() {
@@ -68,24 +60,22 @@ public class Sale {
         if (!(o instanceof Sale sale)) return false;
         return Double.compare(sale.getPrice(), getPrice()) == 0 &&
                 Objects.equals(getId(), sale.getId()) &&
-                Objects.equals(getDog(), sale.getDog()) &&
-                Objects.equals(getCat(), sale.getCat()) &&
-                Objects.equals(getPetOwner(), sale.getPetOwner()) &&
+                Objects.equals(getApplicant(), sale.getApplicant()) &&
+                Objects.equals(getEmployee(), sale.getEmployee()) &&
                 Objects.equals(getSaleDate(), sale.getSaleDate());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getDog(), getCat(), getPetOwner(), getSaleDate(), getPrice());
+        return Objects.hash(getId(), getApplicant(), getEmployee(), getSaleDate(), getPrice());
     }
 
     @Override
     public String toString() {
         return "Sale{" +
                 "id=" + id +
-                ", dog=" + dog +
-                ", cat=" + cat +
-                ", petOwner=" + petOwner +
+                ", applicant=" + applicant +
+                ", employee=" + employee +
                 ", saleDate=" + saleDate +
                 ", price=" + price +
                 '}';
@@ -93,9 +83,8 @@ public class Sale {
 
     public static class Builder {
         private Long id;
-        private Dog dog;
-        private Cat cat;
-        private PetOwner petOwner;
+        private Applicant applicant;
+        private Employee employee;
         private LocalDate saleDate;
         private double price;
 
@@ -103,22 +92,14 @@ public class Sale {
             this.id = id;
             return this;
         }
-
-        public Builder setDog(Dog dog) {
-            this.dog = dog;
+        public Builder setApplicant(Applicant applicant) {
+            this.applicant = applicant;
             return this;
         }
-
-        public Builder setCat(Cat cat) {
-            this.cat = cat;
+        public Builder setEmployee(Employee employee) {
+            this.employee = employee;
             return this;
         }
-
-        public Builder setPetOwner(PetOwner petOwner) {
-            this.petOwner = petOwner;
-            return this;
-        }
-
         public Builder setSaleDate(LocalDate saleDate) {
             this.saleDate = saleDate;
             return this;
@@ -131,9 +112,8 @@ public class Sale {
 
         public Builder copy(Sale s) {
             this.id = s.getId();
-            this.dog = s.getDog();
-            this.cat = s.getCat();
-            this.petOwner = s.getPetOwner();
+            this.applicant = s.getApplicant();
+            this.employee = s.getEmployee();
             this.saleDate = s.getSaleDate();
             this.price = s.getPrice();
             return this;

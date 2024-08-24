@@ -22,7 +22,7 @@ public class Dog {
     protected int cageNumber;
 
 
-    protected Dog() {
+    public Dog() {
     }
 
     private Dog(Builder builder) {

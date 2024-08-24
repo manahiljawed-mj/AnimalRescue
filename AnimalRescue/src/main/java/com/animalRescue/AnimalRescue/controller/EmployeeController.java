@@ -36,6 +36,6 @@ public class EmployeeController {
 
     @GetMapping("/getall")
     public Set<Employee> getAllEmployees() {
-        return employeeService.getAll();
+        return employeeService.getall();
     }
 }
