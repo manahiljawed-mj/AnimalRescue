@@ -1,97 +1,147 @@
 package com.animalRescue.AnimalRescue.controller;
 
-import com.animalRescue.AnimalRescue.domain.Employee;
+import com.animalRescue.AnimalRescue.domain.Cat;
+import com.animalRescue.AnimalRescue.domain.Dog;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.*;
 import com.animalRescue.AnimalRescue.domain.MedicalRecord;
-import com.animalRescue.AnimalRescue.service.MedicalRecordService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import com.animalRescue.AnimalRescue.factory.MedicalRecordFactory;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import java.util.Collections;
 import java.util.Set;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@WebMvcTest(MedicalRecordController.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class MedicalRecordControllerTest {
 
-    @InjectMocks
-    private MedicalRecordController medicalRecordController;
+    @Autowired
+    private TestRestTemplate restTemplate;
 
-    @Mock
-    private MedicalRecordService medicalRecordService;
-
-    private MockMvc mockMvc;
+    private final String BASE_URL = "http://localhost:8080/animalRescue/medicalRecord";
 
     private MedicalRecord medicalRecord;
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(medicalRecordController).build();
-        medicalRecord = new MedicalRecord.Builder()
-                .setId(1L)
-                .setDog(new Dog()) // Assume Dog and Cat instances are available
-                .setCat(new Cat())
-                .setVaccinationDate(LocalDate.now())
-                .setMedication("Med1")
-                .setBehaviour("Good")
-                .setNextCheckup(LocalDate.now().plusMonths(6))
-                .setDescription("Annual checkup")
+
+        Dog dog = new Dog.Builder()
+                .setDogId(9L)
+                .setName("Buddy")
+                .setSize("Large")
+                .setAge(5)
+                .setGender("Male")
+                .setBreed("Golden Retriever")
+                .setCageNumber(0)
                 .build();
+
+        Cat cat = new Cat.Builder()
+                .setCatId(4L)
+                .setName("Whiskers")
+                .setSize("Large")
+                .setAge(3)
+                .setGender("Female")
+                .setBreed("Siamese")
+                .setCageNumber(5)
+                .build();
+
+        medicalRecord =MedicalRecordFactory.buildMedicalRecord(1L,dog,cat,LocalDate.now(),"Med1","Good",LocalDate.now().plusMonths(6),"Annual checkup");
     }
 
     @Test
-    void testCreate() throws Exception {
-        when(medicalRecordService.create(any(MedicalRecord.class))).thenReturn(medicalRecord);
-        mockMvc.perform(post("/medicalRecords")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"dog\":{\"id\":1},\"cat\":{\"id\":1},\"vaccinationDate\":\"2024-08-24\",\"medication\":\"Med1\",\"behaviour\":\"Good\",\"nextCheckup\":\"2024-08-24\",\"description\":\"Annual checkup\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(medicalRecord.getId()));
+    @Order(1)
+    void testCreateMedicalRecord() {
+        String url = BASE_URL + "/create";
+        // Log the dog object being sent
+        System.out.println("Sending Medical Record object: " + medicalRecord);
+        ResponseEntity<MedicalRecord> response = restTemplate.postForEntity(url, medicalRecord, MedicalRecord.class);
+        // Log the response status and body
+        System.out.println("Response Status Code: " + response.getStatusCode());
+        System.out.println("Response Body: " + response.getBody());
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode()); // Change to HttpStatus.OK if needed
+        assertNotNull(response.getBody());
+        MedicalRecord createdMedicalRecord = response.getBody();
+        assertEquals(medicalRecord.getDescription(), createdMedicalRecord.getDescription());
+        System.out.println("Created Medical Record: " + createdMedicalRecord);
     }
 
     @Test
-    void testRead() throws Exception {
-        when(medicalRecordService.read(1L)).thenReturn(medicalRecord);
-        mockMvc.perform(get("/medicalRecords/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.dog.id").value(medicalRecord.getDog()))
-                .andExpect(jsonPath("$.cat.id").value(medicalRecord.getCat()));
+    @Order(2)
+    void testReadMedicalRecord() {
+        // Ensure the dog is created before reading
+        assertNotNull(medicalRecord.getId(), "MedicalRecord ID should not be null");
+        // Correct URL format
+        String url = BASE_URL + "/read/" + medicalRecord.getId();
+        // Log the URL being accessed
+        System.out.println("Request URL: " + url);
+        ResponseEntity<MedicalRecord> response = restTemplate.getForEntity(url, MedicalRecord.class);
+        // Log the response status and body
+        System.out.println("Response Status Code: " + response.getStatusCode());
+        System.out.println("Response Body: " + response.getBody());
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "Expected status code 200 OK");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        MedicalRecord readMedicalRecord = response.getBody();
+        // Log the details of the read dog
+        System.out.println("Read MedicalRecord: " + readMedicalRecord);
     }
 
     @Test
-    void testUpdate() throws Exception {
-        when(medicalRecordService.update(any(MedicalRecord.class))).thenReturn(medicalRecord);
-        mockMvc.perform(put("/medicalRecords")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"id\":1,\"dog\":{\"id\":1},\"cat\":{\"id\":1},\"vaccinationDate\":\"2024-08-24\",\"medication\":\"Med1\",\"behaviour\":\"Good\",\"nextCheckup\":\"2024-08-24\",\"description\":\"Annual checkup\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(medicalRecord.getId()));
+    @Order(3)
+    void testUpdateMedicalRecord() {
+        String url = BASE_URL + "/update";
+        MedicalRecord updatedMedicalRecord = new MedicalRecord.Builder()
+                .copy(medicalRecord)
+                .setMedication("abc")
+                .build();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<MedicalRecord> request = new HttpEntity<>(updatedMedicalRecord, headers);
+        // Using exchange method for PUT request
+        ResponseEntity<MedicalRecord> response = restTemplate.exchange(url, HttpMethod.PUT, request, MedicalRecord.class);
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        MedicalRecord updated = response.getBody();
+        assertEquals(updatedMedicalRecord.getDescription(), updated.getDescription());
+        System.out.println("Updated MedicalRecord: " + updated);
+    }
+
+
+    @Test
+    @Order(4)
+    void testGetAllMedicalRecords() {
+        String url = BASE_URL + "/getall";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<Set> response = restTemplate.exchange(url, HttpMethod.GET, entity, Set.class);
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertFalse(response.getBody().isEmpty());
+        System.out.println("Show All MedicalRecords: " + response.getBody());
     }
 
     @Test
-    void testDelete() throws Exception {
-        doNothing().when(medicalRecordService).delete(1L);
-        mockMvc.perform(delete("/medicalRecords/1"))
-                .andExpect(status().isNoContent());
+    @Order(5)
+    void testDeleteMedicalRecord() {
+        // DELETE the dog
+        String deleteUrl = BASE_URL + "/delete/" + medicalRecord.getId();
+        restTemplate.delete(deleteUrl);
+        // Verify the deletion by attempting to read the dog
+        String readUrl = BASE_URL + "/read/" + medicalRecord.getId();
+        ResponseEntity<MedicalRecord> response = restTemplate.getForEntity(readUrl, MedicalRecord.class);
+        // Log the result
+        System.out.println("Response Status Code after deletion attempt: " + response.getStatusCode());
+        System.out.println("Response Body after deletion attempt: " + response.getBody());
+
     }
 
-    @Test
-    void testGetAll() throws Exception {
-        when(medicalRecordService.getall()).thenReturn((Set<MedicalRecord>) List.of(medicalRecord));
-        mockMvc.perform(get("/medicalRecords"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(medicalRecord.getId()));
-    }
 }

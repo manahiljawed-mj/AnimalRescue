@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class CatService {
+public class CatService implements ICatService{
 
     private final CatRepository repository;
 

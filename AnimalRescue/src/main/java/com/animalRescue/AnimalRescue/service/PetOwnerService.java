@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class PetOwnerService {
+public class PetOwnerService implements IPetOwnerService {
     private final PetOwnerRepository repository;
 
     @Autowired

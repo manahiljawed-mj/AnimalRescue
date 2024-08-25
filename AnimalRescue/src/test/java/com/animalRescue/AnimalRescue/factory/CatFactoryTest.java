@@ -17,13 +17,13 @@ public class CatFactoryTest {
 
     @BeforeEach
     public void setUp() {
-        cat = CatFactory.buildCat("Whiskers", "Small", 3, "Male", "Siamese", 12, medicalRecords);
+        cat = CatFactory.buildCat("Whiskers", "Small", 3, "Male", "Siamese", 12);
     }
 
     @Test
     void testBuildCatWithId() {
         long catId = 123L;
-        Cat catWithId = CatFactory.buildCat(catId, "Fluffy", "Large", 4, "Female", "Persian", 9, medicalRecords);
+        Cat catWithId = CatFactory.buildCat(catId, "Fluffy", "Large", 4, "Female", "Persian", 9);
         assertNotNull(catWithId);
         assertEquals(catId, catWithId.getCatId());
         assertEquals("Fluffy", catWithId.getName());
@@ -36,7 +36,7 @@ public class CatFactoryTest {
 
     @Test
     void testBuildCatWithoutId() {
-        Cat catWithoutId = CatFactory.buildCat("Bella", "Medium", 2, "Female", "Maine Coon", 8, medicalRecords);
+        Cat catWithoutId = CatFactory.buildCat("Bella", "Medium", 2, "Female", "Maine Coon", 8);
         assertNotNull(catWithoutId);
         assertTrue(catWithoutId.getCatId() > 0); // Check if ID is generated
         assertEquals("Bella", catWithoutId.getName());
@@ -49,7 +49,7 @@ public class CatFactoryTest {
 
     @Test
     void testBuildCatWithInvalidData() {
-        Cat invalidCat = CatFactory.buildCat("", "Small", -1, "", "", 0, new HashSet<>());
+        Cat invalidCat = CatFactory.buildCat("", "Small", -1, "", "", 0);
         assertNull(invalidCat);
     }
 }

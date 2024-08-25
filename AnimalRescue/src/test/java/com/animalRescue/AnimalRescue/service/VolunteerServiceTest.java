@@ -1,85 +1,82 @@
 package com.animalRescue.AnimalRescue.service;
 
-import com.animalRescue.AnimalRescue.domain.Volunteer;
-import com.animalRescue.AnimalRescue.repository.VolunteerRepository;
+import com.animalRescue.AnimalRescue.domain.*;
+import com.animalRescue.AnimalRescue.factory.VolunteerFactory;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
+@SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class VolunteerServiceTest {
 
-    @InjectMocks
+    @Autowired
     private VolunteerService volunteerService;
 
-    @Mock
-    private VolunteerRepository volunteerRepository;
-
-    private Volunteer volunteer;
+    private static Volunteer volunteer;
 
     @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        volunteer = new Volunteer.Builder()
-                .setId(1L)
-                .setFirstName("John")
-                .setLastName("Doe")
-                .setContactNo("1234567890")
-                .setEmailAddress("john.doe@example.com")
-                .setStreetAddress("123 Elm Street")
-                .setAvailability("Weekends")
-                .build();
+    void setUp() {
+        volunteer=VolunteerFactory.buildVolunteer(2L,"Manahil","Jawed","12345","abc@gmail.com","abc street","online");
     }
 
     @Test
+    @Order(1)
     void testCreate() {
-        when(volunteerRepository.save(volunteer)).thenReturn(volunteer);
-        Volunteer created = volunteerService.create(volunteer);
-        assertNotNull(created);
-        assertEquals(volunteer.getId(), created.getId());
-        verify(volunteerRepository, times(1)).save(volunteer);
+        Volunteer createdVolunteer = volunteerService.create(volunteer);
+        assertNotNull(createdVolunteer);
+        assertEquals(volunteer.getFirstName(), createdVolunteer.getFirstName());
+        System.out.println("Created: " + createdVolunteer);
     }
 
     @Test
+    @Order(2)
     void testRead() {
-        when(volunteerRepository.findById(1L)).thenReturn(Optional.of(volunteer));
-        Optional<Volunteer> found = Optional.ofNullable(volunteerService.read(1L));
-        assertTrue(found.isPresent());
-        assertEquals(volunteer.getId(), found.get().getId());
+        Volunteer readVolunteer = volunteerService.read(volunteer.getId());
+        assertNotNull(readVolunteer);
+        assertEquals(volunteer.getFirstName(), readVolunteer.getFirstName());
+        System.out.println("Read: " + readVolunteer);
     }
 
     @Test
+    @Order(3)
     void testUpdate() {
-        when(volunteerRepository.save(volunteer)).thenReturn(volunteer);
-        Volunteer updated = volunteerService.update(volunteer);
+        Volunteer updatedVolunteer = new Volunteer.Builder()
+                .copy(volunteer)
+                .setFirstName("Memo")
+                .build();
+        Volunteer updated = volunteerService.update(updatedVolunteer);
         assertNotNull(updated);
-        assertEquals(volunteer.getId(), updated.getId());
-        verify(volunteerRepository, times(1)).save(volunteer);
+        assertEquals(updatedVolunteer.getFirstName(), updated.getFirstName());
+        System.out.println("Updated: " + updated);
     }
 
     @Test
-    void testDelete() {
-        doNothing().when(volunteerRepository).deleteById(1L);
-        volunteerService.delete(1L);
-        verify(volunteerRepository, times(1)).deleteById(1L);
-    }
-
-    @Test
+    @Order(4)
     void testGetAll() {
-        List<Volunteer> volunteers = new ArrayList<>();
-        volunteers.add(volunteer);
-        when(volunteerRepository.findAll()).thenReturn(volunteers);
-        List<Volunteer> allVolunteers = (List<Volunteer>) volunteerService.getall();
-        assertFalse(allVolunteers.isEmpty());
-        assertEquals(1, allVolunteers.size());
-        assertEquals(volunteer.getId(), allVolunteers.get(0).getId());
+        Set<Volunteer> volunteers = volunteerService.getall();
+        assertNotNull(volunteers);
+        assertFalse(volunteers.isEmpty());
+        System.out.println("All Volunteers: " + volunteers);
     }
+
+    @Test
+    @Order(5)
+    void testDelete() {
+        volunteerService.delete(volunteer.getId());
+        Volunteer deleted = volunteerService.read(volunteer.getId());
+        assertNull(deleted);
+        System.out.println("Deleted");
+    }
+
 }

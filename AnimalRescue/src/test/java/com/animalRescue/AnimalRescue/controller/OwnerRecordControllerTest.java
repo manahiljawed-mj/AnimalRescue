@@ -2,97 +2,154 @@ package com.animalRescue.AnimalRescue.controller;
 
 import com.animalRescue.AnimalRescue.domain.Cat;
 import com.animalRescue.AnimalRescue.domain.Dog;
-import com.animalRescue.AnimalRescue.domain.OwnerRecord;
 import com.animalRescue.AnimalRescue.domain.PetOwner;
-import com.animalRescue.AnimalRescue.service.OwnerRecordService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.*;
+import com.animalRescue.AnimalRescue.domain.OwnerRecord;
+import com.animalRescue.AnimalRescue.factory.OwnerRecordFactory;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import java.util.Collections;
 import java.util.Set;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@WebMvcTest(OwnerRecordController.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class OwnerRecordControllerTest {
 
-    @InjectMocks
-    private OwnerRecordController ownerRecordController;
+    @Autowired
+    private TestRestTemplate restTemplate;
 
-    @Mock
-    private OwnerRecordService ownerRecordService;
-
-    private MockMvc mockMvc;
+    private final String BASE_URL = "http://localhost:8080/animalRescue/ownerRecord";
 
     private OwnerRecord ownerRecord;
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(ownerRecordController).build();
-        ownerRecord = new OwnerRecord.Builder()
+        PetOwner petOwner = new PetOwner.Builder()
                 .setId(1L)
-                .setDog(new Dog()) // Assume Dog and Cat instances are available
-                .setCat(new Cat())
-                .setPetOwner(new PetOwner())
-                .setTakenDate(LocalDate.now())
-                .setReturnDate(LocalDate.now().plusMonths(6))
+                .setFirstName("John")
+                .setLastName("Doe")
+                .setContactNo("1234567890")
+                .setEmailAddress("abc@gmail.com")
+                .setStreetAddress("abc")
                 .build();
+
+        Dog dog = new Dog.Builder()
+                .setDogId(9L)
+                .setName("Buddy")
+                .setSize("Large")
+                .setAge(5)
+                .setGender("Male")
+                .setBreed("Golden Retriever")
+                .setCageNumber(0)
+                .build();
+
+        Cat cat = new Cat.Builder()
+                .setCatId(4L)
+                .setName("Whiskers")
+                .setSize("Large")
+                .setAge(3)
+                .setGender("Female")
+                .setBreed("Siamese")
+                .setCageNumber(5)
+                .build();
+
+        ownerRecord = OwnerRecordFactory.buildOwnerRecord(1L,dog,cat,petOwner, LocalDate.now(),LocalDate.now().plusMonths(6));
     }
 
     @Test
-    void testCreate() throws Exception {
-        when(ownerRecordService.create(any(OwnerRecord.class))).thenReturn(ownerRecord);
-        mockMvc.perform(post("/ownerRecords")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"dog\":{\"id\":1},\"cat\":{\"id\":1},\"petOwner\":{\"id\":1},\"takenDate\":\"2024-08-24\",\"returnDate\":\"2024-02-24\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(ownerRecord.getId()));
+    @Order(1)
+    void testCreateOwnerRecord() {
+        String url = BASE_URL + "/create";
+        // Log the dog object being sent
+        System.out.println("Sending OwnerRecord object: " + ownerRecord);
+        ResponseEntity<OwnerRecord> response = restTemplate.postForEntity(url, ownerRecord, OwnerRecord.class);
+        // Log the response status and body
+        System.out.println("Response Status Code: " + response.getStatusCode());
+        System.out.println("Response Body: " + response.getBody());
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode()); // Change to HttpStatus.OK if needed
+        assertNotNull(response.getBody());
+        OwnerRecord createdOwnerRecord = response.getBody();
+        assertEquals(ownerRecord.getTakenDate(), createdOwnerRecord.getTakenDate());
+        System.out.println("Created OwnerRecord: " + createdOwnerRecord);
     }
 
     @Test
-    void testRead() throws Exception {
-        when(ownerRecordService.read(1L)).thenReturn(ownerRecord);
-        mockMvc.perform(get("/ownerRecords/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.dog.id").value(ownerRecord.getDog()))
-                .andExpect(jsonPath("$.cat.id").value(ownerRecord.getCat()))
-                .andExpect(jsonPath("$.petOwner.id").value(ownerRecord.getPetOwner().getId()));
+    @Order(2)
+    void testReadOwnerRecord() {
+        // Ensure the dog is created before reading
+        assertNotNull(ownerRecord.getId(), "OwnerRecord ID should not be null");
+        // Correct URL format
+        String url = BASE_URL + "/read/" + ownerRecord.getId();
+        // Log the URL being accessed
+        System.out.println("Request URL: " + url);
+        ResponseEntity<OwnerRecord> response = restTemplate.getForEntity(url, OwnerRecord.class);
+        // Log the response status and body
+        System.out.println("Response Status Code: " + response.getStatusCode());
+        System.out.println("Response Body: " + response.getBody());
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode(), "Expected status code 200 OK");
+        assertNotNull(response.getBody(), "Response body should not be null");
+        OwnerRecord readOwnerRecord = response.getBody();
+        // Log the details of the read dog
+        System.out.println("Read OwnerRecord: " + readOwnerRecord);
     }
 
     @Test
-    void testUpdate() throws Exception {
-        when(ownerRecordService.update(any(OwnerRecord.class))).thenReturn(ownerRecord);
-        mockMvc.perform(put("/ownerRecords")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"id\":1,\"dog\":{\"id\":1},\"cat\":{\"id\":1},\"petOwner\":{\"id\":1},\"takenDate\":\"2024-08-24\",\"returnDate\":\"2024-02-24\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(ownerRecord.getId()));
+    @Order(3)
+    void testUpdateOwnerRecord() {
+        String url = BASE_URL + "/update";
+        OwnerRecord updatedOwnerRecord = new OwnerRecord.Builder()
+                .copy(ownerRecord)
+                .build();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<OwnerRecord> request = new HttpEntity<>(updatedOwnerRecord, headers);
+        // Using exchange method for PUT request
+        ResponseEntity<OwnerRecord> response = restTemplate.exchange(url, HttpMethod.PUT, request, OwnerRecord.class);
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        OwnerRecord updated = response.getBody();
+        assertEquals(updatedOwnerRecord.getTakenDate(), updated.getTakenDate());
+        System.out.println("Updated OwnerRecord: " + updated);
+    }
+
+
+    @Test
+    @Order(4)
+    void testGetAllOwnerRecords() {
+        String url = BASE_URL + "/getall";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        ResponseEntity<Set> response = restTemplate.exchange(url, HttpMethod.GET, entity, Set.class);
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertFalse(response.getBody().isEmpty());
+        System.out.println("Show All OwnerRecords: " + response.getBody());
     }
 
     @Test
-    void testDelete() throws Exception {
-        doNothing().when(ownerRecordService).delete(1L);
-        mockMvc.perform(delete("/ownerRecords/1"))
-                .andExpect(status().isNoContent());
+    @Order(5)
+    void testDeleteOwnerRecord() {
+        // DELETE the dog
+        String deleteUrl = BASE_URL + "/delete/" + ownerRecord.getId();
+        restTemplate.delete(deleteUrl);
+        // Verify the deletion by attempting to read the dog
+        String readUrl = BASE_URL + "/read/" + ownerRecord.getId();
+        ResponseEntity<OwnerRecord> response = restTemplate.getForEntity(readUrl, OwnerRecord.class);
+        // Log the result
+        System.out.println("Response Status Code after deletion attempt: " + response.getStatusCode());
+        System.out.println("Response Body after deletion attempt: " + response.getBody());
+
     }
 
-    @Test
-    void testGetAll() throws Exception {
-        when(ownerRecordService.getall()).thenReturn((Set<OwnerRecord>) List.of(ownerRecord));
-        mockMvc.perform(get("/ownerRecords"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(ownerRecord.getId()));
-    }
 }

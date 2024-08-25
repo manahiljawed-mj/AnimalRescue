@@ -22,7 +22,7 @@ public class CatServiceTest {
     @BeforeEach
     public void setUp() {
         whiskers = new Cat.Builder()
-                .setCatId(1L)
+                .setCatId(7L)
                 .setName("Whiskers")
                 .setAge(3)
                 .setBreed("Siamese")
@@ -77,8 +77,16 @@ public class CatServiceTest {
         System.out.println("Updated: " + updated);
     }
 
+
     @Test
     @Order(4)
+    void testGetAll() {
+        Set<Cat> cats = catService.getall();
+        System.out.println("All Cats: " + cats);
+    }
+
+    @Test
+    @Order(5)
     void testDelete() {
         catService.delete(whiskers.getCatId());
         Cat deleted = catService.read(whiskers.getCatId());
@@ -86,10 +94,5 @@ public class CatServiceTest {
         System.out.println("Deleted");
     }
 
-    @Test
-    @Order(5)
-    void testGetAll() {
-        Set<Cat> cats = catService.getall();
-        System.out.println("All Cats: " + cats);
-    }
+
 }

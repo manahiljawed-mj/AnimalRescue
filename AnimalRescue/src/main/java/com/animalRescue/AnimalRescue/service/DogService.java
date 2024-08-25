@@ -10,9 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class DogService {
-
-
+public class DogService implements IDogService{
 
     private final DogRepository repository;
 
@@ -21,27 +19,27 @@ public class DogService {
         this.repository = repository;
     }
 
-
+   @Override
     public Dog create(Dog dog) {
         return repository.save(dog);
     }
 
-
+   @Override
     public Dog read(Long id) {
         return repository.findById(id).orElse(null);
     }
 
-
+    @Override
     public Dog update(Dog dog) {
         return repository.save(dog);
     }
 
-
+    @Override
     public void delete(Long id) {
         repository.deleteById(id);
     }
 
-
+    @Override
     public Set<Dog> getall() {
         return repository.findAll().stream().collect(Collectors.toSet());
     }

@@ -1,6 +1,7 @@
 package com.animalRescue.AnimalRescue.factory;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import com.animalRescue.AnimalRescue.domain.Dog;
 import com.animalRescue.AnimalRescue.domain.MedicalRecord;
@@ -28,8 +29,9 @@ public class DogFactoryTest {
     }
 
     @Test
+    @Order(1)
     void testBuildDogWithId() {
-        Dog dog = DogFactory.buildDog(1L, "Buddy", "Medium", 5, "Male", "Labrador", 101, medicalRecords);
+        Dog dog = DogFactory.buildDog(1L, "Buddy", "Medium", 5, "Male", "Labrador", 101);
 
         assertNotNull(dog);
         assertEquals(1L, dog.getDogId());
@@ -42,8 +44,9 @@ public class DogFactoryTest {
     }
 
     @Test
+    @Order(1)
     void testBuildDogWithoutId() {
-        Dog dog = DogFactory.buildDog("Max", "Large", 3, "Male", "German Shepherd", 102, medicalRecords);
+        Dog dog = DogFactory.buildDog("Max", "Large", 3, "Male", "German Shepherd", 102);
 
         assertNotNull(dog);
         assertNotNull(dog.getDogId());
@@ -57,15 +60,17 @@ public class DogFactoryTest {
     }
 
     @Test
+    @Order(1)
     void testBuildDogWithInvalidData() {
-        Dog dog = DogFactory.buildDog("", "Small", -1, "", "", 0, new HashSet<>());
+        Dog dog = DogFactory.buildDog("", "Small", -1, "", "", 0);
 
         assertNull(dog);
     }
 
     @Test
+    @Order(1)
     void testBuildDogWithNullMedicalRecords() {
-        Dog dog = DogFactory.buildDog("Bella", "Small", 2, "Female", "Poodle", 103, null);
+        Dog dog = DogFactory.buildDog("", "Small", 2, "Female", "Poodle", 103);
 
         assertNull(dog);
     }

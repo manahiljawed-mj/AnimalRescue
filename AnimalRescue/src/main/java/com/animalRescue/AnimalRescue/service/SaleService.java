@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class SaleService {
+public class SaleService implements ISaleService {
     private final SaleRepository repository;
 
     @Autowired

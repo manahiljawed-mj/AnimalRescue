@@ -8,11 +8,10 @@ import java.util.Set;
 
 public class DogFactory {
 
-    public static Dog buildDog(long dogId, String name, String size, int age, String gender, String breed, int cageNumber, Set<MedicalRecord> medicalRecords) {
-        if (Helper.isNullorZero(dogId) || Helper.isNullorEmpty(name) || Helper.isNullorEmpty(size) || Helper.isLessThanOrEqualToZero(age) || Helper.isNullorEmpty(gender) || Helper.isNullorEmpty(breed) || Helper.isLessThanOrEqualToZero(cageNumber) || medicalRecords == null || medicalRecords.isEmpty()) {
+    public static Dog buildDog(long dogId, String name, String size, int age, String gender, String breed, int cageNumber) {
+        if (Helper.isNullorZero(dogId) || Helper.isNullorEmpty(name) || Helper.isNullorEmpty(size) || Helper.isLessThanOrEqualToZero(age) || Helper.isNullorEmpty(gender) || Helper.isNullorEmpty(breed) || Helper.isLessThanOrEqualToZero(cageNumber)) {
             return null;
         }
-
         Dog dog = new Dog.Builder()
                 .setDogId(dogId)
                 .setName(name)
@@ -23,20 +22,11 @@ public class DogFactory {
                 .setCageNumber(cageNumber)
                 .build();
 
-        Set<MedicalRecord> updatedMedicalRecords = new HashSet<>();
-        for (MedicalRecord record : medicalRecords) {
-            MedicalRecord updatedRecord = new MedicalRecord.Builder()
-                    .copy(record)
-                    .setDog(dog)
-                    .build();
-            updatedMedicalRecords.add(updatedRecord);
-        }
-
         return dog;
     }
 
-    public static Dog buildDog(String name, String size, int age, String gender, String breed, int cageNumber, Set<MedicalRecord> medicalRecords) {
-        if (Helper.isNullorEmpty(name) || Helper.isNullorEmpty(size) || Helper.isLessThanOrEqualToZero(age) || Helper.isNullorEmpty(gender) || Helper.isNullorEmpty(breed) || Helper.isLessThanOrEqualToZero(cageNumber) || medicalRecords == null || medicalRecords.isEmpty()) {
+    public static Dog buildDog(String name, String size, int age, String gender, String breed, int cageNumber) {
+        if (Helper.isNullorEmpty(name) || Helper.isNullorEmpty(size) || Helper.isLessThanOrEqualToZero(age) || Helper.isNullorEmpty(gender) || Helper.isNullorEmpty(breed) || Helper.isLessThanOrEqualToZero(cageNumber)) {
             return null;
         }
 
@@ -51,16 +41,6 @@ public class DogFactory {
                 .setBreed(breed)
                 .setCageNumber(cageNumber)
                 .build();
-
-        Set<MedicalRecord> updatedMedicalRecords = new HashSet<>();
-        for (MedicalRecord record : medicalRecords) {
-            MedicalRecord updatedRecord = new MedicalRecord.Builder()
-                    .copy(record)
-                    .setDog(dog)
-                    .build();
-            updatedMedicalRecords.add(updatedRecord);
-        }
-
         return dog;
     }
 

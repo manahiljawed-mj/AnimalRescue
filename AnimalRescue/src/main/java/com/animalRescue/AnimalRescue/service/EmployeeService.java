@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class EmployeeService {
+public class EmployeeService implements IEmployeeService {
     private final EmployeeRepository repository;
 
     @Autowired

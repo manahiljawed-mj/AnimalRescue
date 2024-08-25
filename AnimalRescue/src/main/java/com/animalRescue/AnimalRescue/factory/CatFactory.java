@@ -8,8 +8,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class CatFactory {
-    public static Cat buildCat(long catId, String name, String size, int age, String gender, String breed, int cageNumber, Set<MedicalRecord> medicalRecords) {
-        if (Helper.isNullorZero(catId) || Helper.isNullorEmpty(name) || Helper.isNullorEmpty(size) || Helper.isLessThanOrEqualToZero(age) || Helper.isNullorEmpty(gender) || Helper.isNullorEmpty(breed) || Helper.isLessThanOrEqualToZero(cageNumber) || medicalRecords == null || medicalRecords.isEmpty()) {
+    public static Cat buildCat(long catId, String name, String size, int age, String gender, String breed, int cageNumber) {
+        if (Helper.isNullorZero(catId) || Helper.isNullorEmpty(name) || Helper.isNullorEmpty(size) || Helper.isLessThanOrEqualToZero(age) || Helper.isNullorEmpty(gender) || Helper.isNullorEmpty(breed) || Helper.isLessThanOrEqualToZero(cageNumber)) {
             return null;
         }
 
@@ -23,20 +23,11 @@ public class CatFactory {
                 .setCageNumber(cageNumber)
                 .build();
 
-        Set<MedicalRecord> updatedMedicalRecords = new HashSet<>();
-        for (MedicalRecord record : medicalRecords) {
-            MedicalRecord updatedRecord = new MedicalRecord.Builder()
-                    .copy(record)
-                    .setCat(cat)
-                    .build();
-            updatedMedicalRecords.add(updatedRecord);
-        }
-
         return cat;
     }
 
-    public static Cat buildCat(String name, String size, int age, String gender, String breed, int cageNumber, Set<MedicalRecord> medicalRecords) {
-        if (Helper.isNullorEmpty(name) || Helper.isNullorEmpty(size) || Helper.isLessThanOrEqualToZero(age) || Helper.isNullorEmpty(gender) || Helper.isNullorEmpty(breed) || Helper.isLessThanOrEqualToZero(cageNumber) || medicalRecords == null || medicalRecords.isEmpty()) {
+    public static Cat buildCat(String name, String size, int age, String gender, String breed, int cageNumber) {
+        if (Helper.isNullorEmpty(name) || Helper.isNullorEmpty(size) || Helper.isLessThanOrEqualToZero(age) || Helper.isNullorEmpty(gender) || Helper.isNullorEmpty(breed) || Helper.isLessThanOrEqualToZero(cageNumber)) {
             return null;
         }
 
@@ -51,15 +42,6 @@ public class CatFactory {
                 .setBreed(breed)
                 .setCageNumber(cageNumber)
                 .build();
-
-        Set<MedicalRecord> updatedMedicalRecords = new HashSet<>();
-        for (MedicalRecord record : medicalRecords) {
-            MedicalRecord updatedRecord = new MedicalRecord.Builder()
-                    .copy(record)
-                    .setCat(cat)
-                    .build();
-            updatedMedicalRecords.add(updatedRecord);
-        }
 
         return cat;
     }

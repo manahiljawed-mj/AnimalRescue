@@ -25,11 +25,37 @@ public class ApplicantServiceTest {
 
     @BeforeEach
     public void setUp() {
-        PetOwner petOwner = new PetOwner(); // Initialize as needed
-        Dog dog = new Dog(); // Initialize as needed
-        Cat cat = new Cat(); // Initialize as needed
+        PetOwner petOwner = new PetOwner.Builder()
+                .setId(1L)
+                .setFirstName("John")
+                .setLastName("Doe")
+                .setContactNo("1234567890")
+                .setEmailAddress("abc@gmail.com")
+                .setStreetAddress("abc")
+                .build();
 
-        applicant = ApplicantFactory.buildApplicant(petOwner, LocalDate.now(), dog, cat, "Pending");
+        Dog dog = new Dog.Builder()
+                .setDogId(8L)
+                .setName("Buddy")
+                .setSize("Large")
+                .setAge(5)
+                .setGender("Male")
+                .setBreed("Golden Retriever")
+                .setCageNumber(0)
+                .build();
+
+        Cat cat = new Cat.Builder()
+                .setCatId(4L)
+                .setName("Whiskers")
+                .setSize("Large")
+                .setAge(3)
+                .setGender("Female")
+                .setBreed("Siamese")
+                .setCageNumber(5)
+                .build();
+
+
+        applicant = ApplicantFactory.buildApplicant(15L,petOwner, LocalDate.now(), dog, cat, "Pending");
     }
 
     @Test
@@ -65,6 +91,15 @@ public class ApplicantServiceTest {
 
     @Test
     @Order(4)
+    void testGetAll() {
+        Set<Applicant> applicants = applicantService.getall();
+        assertNotNull(applicants);
+        assertFalse(applicants.isEmpty());
+        System.out.println("All Applicants: " + applicants);
+    }
+
+    @Test
+    @Order(5)
     void testDelete() {
         applicantService.delete(applicant.getId());
         Applicant deleted = applicantService.read(applicant.getId());
@@ -72,12 +107,5 @@ public class ApplicantServiceTest {
         System.out.println("Deleted");
     }
 
-    @Test
-    @Order(5)
-    void testGetAll() {
-        Set<Applicant> applicants = applicantService.getall();
-        assertNotNull(applicants);
-        assertFalse(applicants.isEmpty());
-        System.out.println("All Applicants: " + applicants);
-    }
+
 }

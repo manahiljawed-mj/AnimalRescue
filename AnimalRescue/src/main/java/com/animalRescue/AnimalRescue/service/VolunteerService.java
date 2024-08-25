@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class VolunteerService {
+public class VolunteerService implements IVolunteerService {
     private final VolunteerRepository repository;
 
     @Autowired
@@ -17,27 +17,27 @@ public class VolunteerService {
         this.repository = repository;
     }
 
-
+    @Override
     public Volunteer create(Volunteer volunteer) {
         return repository.save(volunteer);
     }
 
-
+    @Override
     public Volunteer read(Long id) {
         return repository.findById(id).orElse(null);
     }
 
-
+    @Override
     public Volunteer update(Volunteer volunteer) {
         return repository.save(volunteer);
     }
 
-
+    @Override
     public void delete(Long id) {
         repository.deleteById(id);
     }
 
-
+    
     public Set<Volunteer> getall() {
         return repository.findAll().stream().collect(Collectors.toSet());
     }

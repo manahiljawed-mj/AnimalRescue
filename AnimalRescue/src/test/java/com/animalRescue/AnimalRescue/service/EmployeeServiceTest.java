@@ -1,83 +1,82 @@
 package com.animalRescue.AnimalRescue.service;
 
-import com.animalRescue.AnimalRescue.domain.Employee;
-import com.animalRescue.AnimalRescue.repository.EmployeeRepository;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import com.animalRescue.AnimalRescue.domain.Employee;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class EmployeeServiceTest {
 
-    @InjectMocks
+    @Autowired
     private EmployeeService employeeService;
 
-    @Mock
-    private EmployeeRepository employeeRepository;
-
-    private Employee employee;
-
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        employee = new Employee.Builder()
-                .setId(1L)
-                .setFirstName("John")
-                .setLastName("Doe")
-                .setContactNo("1234567890")
-                .setEmailAddress("john.doe@example.com")
-                .build();
-    }
+    private static Employee employee = new Employee.Builder()
+            .setId(1L)
+            .setFirstName("John")
+            .setLastName("Doe")
+            .setContactNo("1234567890")
+            .setEmailAddress("john.doe@example.com")
+            .build();
 
     @Test
+    @Order(1)
     void testCreate() {
-        when(employeeRepository.save(employee)).thenReturn(employee);
-        Employee created = employeeService.create(employee);
-        assertNotNull(created);
-        assertEquals(employee.getId(), created.getId());
-        verify(employeeRepository, times(1)).save(employee);
+        Employee createdEmployee = employeeService.create(employee);
+        assertNotNull(createdEmployee);
+        assertEquals(employee.getId(), createdEmployee.getId());
+        System.out.println("Created: " + createdEmployee);
     }
 
     @Test
+    @Order(2)
     void testRead() {
-        when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
-        Optional<Employee> found = Optional.ofNullable(employeeService.read(1L));
-        assertTrue(found.isPresent());
-        assertEquals(employee.getId(), found.get().getId());
+        Employee readEmployee = employeeService.read(employee.getId());
+        assertNotNull(readEmployee);
+        assertEquals(employee.getId(), readEmployee.getId());
+        System.out.println("Read: " + readEmployee);
     }
 
     @Test
+    @Order(3)
     void testUpdate() {
-        when(employeeRepository.save(employee)).thenReturn(employee);
-        Employee updated = employeeService.update(employee);
+        Employee updatedEmployee = new Employee.Builder()
+                .copy(employee)
+                .setContactNo("0987654321")
+                .build();
+        Employee updated = employeeService.update(updatedEmployee);
         assertNotNull(updated);
-        assertEquals(employee.getId(), updated.getId());
-        verify(employeeRepository, times(1)).save(employee);
+        assertEquals("0987654321", updated.getContactNo());
+        System.out.println("Updated: " + updated);
     }
 
-    @Test
-    void testDelete() {
-        doNothing().when(employeeRepository).deleteById(1L);
-        employeeService.delete(1L);
-        verify(employeeRepository, times(1)).deleteById(1L);
-    }
 
     @Test
+    @Order(4)
     void testGetAll() {
-        List<Employee> employees = new ArrayList<>();
-        employees.add(employee);
-        when(employeeRepository.findAll()).thenReturn(employees);
-        List<Employee> allEmployees = (List<Employee>) employeeService.getall();
-        assertFalse(allEmployees.isEmpty());
-        assertEquals(1, allEmployees.size());
-        assertEquals(employee.getId(), allEmployees.get(0).getId());
+        Set<Employee> employees = employeeService.getall();
+        assertFalse(employees.isEmpty());
+        System.out.println("All Employees: " + employees);
     }
+
+    @Test
+    @Order(5)
+    void testDelete() {
+        employeeService.delete(employee.getId());
+        Employee deleted = employeeService.read(employee.getId());
+        assertNull(deleted);
+        System.out.println("Deleted");
+    }
+
 }

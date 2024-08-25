@@ -4,85 +4,110 @@ import com.animalRescue.AnimalRescue.domain.Cat;
 import com.animalRescue.AnimalRescue.domain.Dog;
 import com.animalRescue.AnimalRescue.domain.OwnerRecord;
 import com.animalRescue.AnimalRescue.domain.PetOwner;
-import com.animalRescue.AnimalRescue.repository.OwnerRecordRepository;
+import com.animalRescue.AnimalRescue.factory.OwnerRecordFactory;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
+@SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class OwnerRecordServiceTest {
 
-    @InjectMocks
+    @Autowired
     private OwnerRecordService ownerRecordService;
 
-    @Mock
-    private OwnerRecordRepository ownerRecordRepository;
-
-    private OwnerRecord ownerRecord;
+    private static OwnerRecord ownerRecord;
 
     @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        ownerRecord = new OwnerRecord.Builder()
+    void setUp() {
+        PetOwner petOwner = new PetOwner.Builder()
                 .setId(1L)
-                .setDog(new Dog()) // Assume Dog and Cat instances are available
-                .setCat(new Cat())
-                .setPetOwner(new PetOwner())
-                .setTakenDate(LocalDate.now())
-                .setReturnDate(LocalDate.now().plusMonths(6))
+                .setFirstName("John")
+                .setLastName("Doe")
+                .setContactNo("1234567890")
+                .setEmailAddress("abc@gmail.com")
+                .setStreetAddress("abc")
                 .build();
+
+        Dog dog = new Dog.Builder()
+                .setDogId(9L)
+                .setName("Buddy")
+                .setSize("Large")
+                .setAge(5)
+                .setGender("Male")
+                .setBreed("Golden Retriever")
+                .setCageNumber(0)
+                .build();
+
+        Cat cat = new Cat.Builder()
+                .setCatId(4L)
+                .setName("Whiskers")
+                .setSize("Large")
+                .setAge(3)
+                .setGender("Female")
+                .setBreed("Siamese")
+                .setCageNumber(5)
+                .build();
+
+        ownerRecord = OwnerRecordFactory.buildOwnerRecord(4L,dog,cat,petOwner, LocalDate.now(),LocalDate.now().plusMonths(6));
     }
 
     @Test
+    @Order(1)
     void testCreate() {
-        when(ownerRecordRepository.save(ownerRecord)).thenReturn(ownerRecord);
-        OwnerRecord created = ownerRecordService.create(ownerRecord);
-        assertNotNull(created);
-        assertEquals(ownerRecord.getId(), created.getId());
-        verify(ownerRecordRepository, times(1)).save(ownerRecord);
+        OwnerRecord createdOwnerRecord = ownerRecordService.create(ownerRecord);
+        assertNotNull(createdOwnerRecord);
+        assertEquals(ownerRecord.getReturnDate(), createdOwnerRecord.getReturnDate());
+        System.out.println("Created: " + createdOwnerRecord);
     }
 
     @Test
+    @Order(2)
     void testRead() {
-        when(ownerRecordRepository.findById(1L)).thenReturn(Optional.of(ownerRecord));
-        Optional<OwnerRecord> found = Optional.ofNullable(ownerRecordService.read(1L));
-        assertTrue(found.isPresent());
-        assertEquals(ownerRecord.getId(), found.get().getId());
+        OwnerRecord readOwnerRecord = ownerRecordService.read(ownerRecord.getId());
+        assertNotNull(readOwnerRecord);
+        assertEquals(ownerRecord.getReturnDate(), readOwnerRecord.getReturnDate());
+        System.out.println("Read: " + readOwnerRecord);
     }
 
     @Test
+    @Order(3)
     void testUpdate() {
-        when(ownerRecordRepository.save(ownerRecord)).thenReturn(ownerRecord);
-        OwnerRecord updated = ownerRecordService.update(ownerRecord);
+        OwnerRecord updatedOwnerRecord = new OwnerRecord.Builder()
+                .copy(ownerRecord)
+                .setReturnDate(LocalDate.now().plusMonths(12))
+                .build();
+        OwnerRecord updated = ownerRecordService.update(updatedOwnerRecord);
         assertNotNull(updated);
-        assertEquals(ownerRecord.getId(), updated.getId());
-        verify(ownerRecordRepository, times(1)).save(ownerRecord);
+        assertEquals(updatedOwnerRecord.getReturnDate(), updated.getReturnDate());
+        System.out.println("Updated: " + updated);
     }
 
     @Test
-    void testDelete() {
-        doNothing().when(ownerRecordRepository).deleteById(1L);
-        ownerRecordService.delete(1L);
-        verify(ownerRecordRepository, times(1)).deleteById(1L);
-    }
-
-    @Test
+    @Order(4)
     void testGetAll() {
-        List<OwnerRecord> records = new ArrayList<>();
-        records.add(ownerRecord);
-        when(ownerRecordRepository.findAll()).thenReturn(records);
-        List<OwnerRecord> allRecords = (List<OwnerRecord>) ownerRecordService.getall();
-        assertFalse(allRecords.isEmpty());
-        assertEquals(1, allRecords.size());
-        assertEquals(ownerRecord.getId(), allRecords.get(0).getId());
+        Set<OwnerRecord> ownerRecords = ownerRecordService.getall();
+        assertNotNull(ownerRecords);
+        assertFalse(ownerRecords.isEmpty());
+        System.out.println("All OwnerRecords: " + ownerRecords);
+    }
+
+    @Test
+    @Order(5)
+    void testDelete() {
+        ownerRecordService.delete(ownerRecord.getId());
+        OwnerRecord deleted = ownerRecordService.read(ownerRecord.getId());
+        assertNull(deleted);
+        System.out.println("Deleted");
     }
 }

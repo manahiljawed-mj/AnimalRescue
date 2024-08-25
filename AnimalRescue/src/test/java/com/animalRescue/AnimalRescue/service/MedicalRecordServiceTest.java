@@ -1,89 +1,102 @@
 package com.animalRescue.AnimalRescue.service;
 
+import com.animalRescue.AnimalRescue.factory.MedicalRecordFactory;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import com.animalRescue.AnimalRescue.domain.Cat;
 import com.animalRescue.AnimalRescue.domain.Dog;
 import com.animalRescue.AnimalRescue.domain.MedicalRecord;
-import com.animalRescue.AnimalRescue.repository.MedicalRecordRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class MedicalRecordServiceTest {
 
-    @InjectMocks
+    @Autowired
     private MedicalRecordService medicalRecordService;
 
-    @Mock
-    private MedicalRecordRepository medicalRecordRepository;
+    Dog dog = new Dog.Builder()
+            .setDogId(9L)
+            .setName("Buddy")
+            .setSize("Large")
+            .setAge(5)
+            .setGender("Male")
+            .setBreed("Golden Retriever")
+            .setCageNumber(0)
+            .build();
 
-    private MedicalRecord medicalRecord;
+    Cat cat = new Cat.Builder()
+            .setCatId(4L)
+            .setName("Whiskers")
+            .setSize("Large")
+            .setAge(3)
+            .setGender("Female")
+            .setBreed("Siamese")
+            .setCageNumber(5)
+            .build();
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        medicalRecord = new MedicalRecord.Builder()
-                .setId(1L)
-                .setDog(new Dog()) // Assume Dog and Cat instances are available
-                .setCat(new Cat())
-                .setVaccinationDate(LocalDate.now())
-                .setMedication("Med1")
-                .setBehaviour("Good")
-                .setNextCheckup(LocalDate.now().plusMonths(6))
-                .setDescription("Annual checkup")
-                .build();
-    }
+    private final MedicalRecord medicalRecord =MedicalRecordFactory.buildMedicalRecord(2L,dog,cat,LocalDate.now(),"Med1","Good",LocalDate.now().plusMonths(6),"Annual checkup");
 
     @Test
+    @Order(1)
     void testCreate() {
-        when(medicalRecordRepository.save(medicalRecord)).thenReturn(medicalRecord);
-        MedicalRecord created = medicalRecordService.create(medicalRecord);
-        assertNotNull(created);
-        assertEquals(medicalRecord.getId(), created.getId());
-        verify(medicalRecordRepository, times(1)).save(medicalRecord);
+        MedicalRecord createdRecord = medicalRecordService.create(medicalRecord);
+        assertNotNull(createdRecord);
+        assert medicalRecord != null;
+        assertEquals(medicalRecord.getDescription(), createdRecord.getDescription());
+        System.out.println("Created: " + createdRecord);
     }
 
     @Test
+    @Order(2)
     void testRead() {
-        when(medicalRecordRepository.findById(1L)).thenReturn(Optional.of(medicalRecord));
-        Optional<MedicalRecord> found = Optional.ofNullable(medicalRecordService.read(1L));
-        assertTrue(found.isPresent());
-        assertEquals(medicalRecord.getId(), found.get().getId());
+        MedicalRecord readRecord = medicalRecordService.read(medicalRecord.getId());
+        assertNotNull(readRecord);
+        assertEquals(medicalRecord.getDescription(), readRecord.getDescription());
+        System.out.println("Read: " + readRecord);
     }
 
     @Test
+    @Order(3)
     void testUpdate() {
-        when(medicalRecordRepository.save(medicalRecord)).thenReturn(medicalRecord);
-        MedicalRecord updated = medicalRecordService.update(medicalRecord);
+        assert medicalRecord != null;
+        MedicalRecord updatedRecord = new MedicalRecord.Builder()
+                .copy(medicalRecord)
+                .setDescription("Updated checkup")
+                .build();
+        MedicalRecord updated = medicalRecordService.update(updatedRecord);
         assertNotNull(updated);
-        assertEquals(medicalRecord.getId(), updated.getId());
-        verify(medicalRecordRepository, times(1)).save(medicalRecord);
+        assertEquals("Updated checkup", updated.getDescription());
+        System.out.println("Updated: " + updated);
     }
 
     @Test
-    void testDelete() {
-        doNothing().when(medicalRecordRepository).deleteById(1L);
-        medicalRecordService.delete(1L);
-        verify(medicalRecordRepository, times(1)).deleteById(1L);
-    }
-
-    @Test
+    @Order(4)
     void testGetAll() {
-        List<MedicalRecord> records = new ArrayList<>();
-        records.add(medicalRecord);
-        when(medicalRecordRepository.findAll()).thenReturn(records);
-        List<MedicalRecord> allRecords = (List<MedicalRecord>) medicalRecordService.getall();
-        assertFalse(allRecords.isEmpty());
-        assertEquals(1, allRecords.size());
-        assertEquals(medicalRecord.getId(), allRecords.get(0).getId());
+        Set<MedicalRecord> records = medicalRecordService.getall();
+        assertFalse(records.isEmpty());
+        System.out.println("All Medical Records: " + records);
     }
+
+    @Test
+    @Order(5)
+    void testDelete() {
+        assert medicalRecord != null;
+        medicalRecordService.delete(medicalRecord.getId());
+        MedicalRecord deleted = medicalRecordService.read(medicalRecord.getId());
+        assertNull(deleted);
+        System.out.println("Deleted");
+    }
+
 }

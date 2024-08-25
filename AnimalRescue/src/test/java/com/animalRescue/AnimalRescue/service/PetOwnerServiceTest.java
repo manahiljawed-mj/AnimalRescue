@@ -1,84 +1,83 @@
 package com.animalRescue.AnimalRescue.service;
 
+import com.animalRescue.AnimalRescue.domain.MedicalRecord;
 import com.animalRescue.AnimalRescue.domain.PetOwner;
-import com.animalRescue.AnimalRescue.repository.PetOwnerRepository;
+import com.animalRescue.AnimalRescue.factory.PetOwnerFactory;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
+@SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PetOwnerServiceTest {
 
-    @InjectMocks
+    @Autowired
     private PetOwnerService petOwnerService;
 
-    @Mock
-    private PetOwnerRepository petOwnerRepository;
-
-    private PetOwner petOwner;
+    private static PetOwner petOwner;
 
     @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        petOwner = new PetOwner.Builder()
-                .setId(1L)
-                .setFirstName("John")
-                .setLastName("Doe")
-                .setContactNo("1234567890")
-                .setEmailAddress("john.doe@example.com")
-                .setStreetAddress("123 Elm Street")
-                .build();
+    void setUp() {
+        petOwner = PetOwnerFactory.buildPetOwner(2,"Manahil","Jawed", "12345678", "abc@gmail.com","abc street");
     }
 
     @Test
+    @Order(1)
     void testCreate() {
-        when(petOwnerRepository.save(petOwner)).thenReturn(petOwner);
-        PetOwner created = petOwnerService.create(petOwner);
-        assertNotNull(created);
-        assertEquals(petOwner.getId(), created.getId());
-        verify(petOwnerRepository, times(1)).save(petOwner);
+        PetOwner createdPetOwner = petOwnerService.create(petOwner);
+        assertNotNull(createdPetOwner);
+        assertEquals(petOwner.getId(), createdPetOwner.getId());
+        System.out.println("Created: " + createdPetOwner);
     }
 
     @Test
+    @Order(2)
     void testRead() {
-        when(petOwnerRepository.findById(1L)).thenReturn(Optional.of(petOwner));
-        Optional<PetOwner> found = Optional.ofNullable(petOwnerService.read(1L));
-        assertTrue(found.isPresent());
-        assertEquals(petOwner.getId(), found.get().getId());
+        PetOwner readPetOwner = petOwnerService.read(petOwner.getId());
+        assertNotNull(readPetOwner);
+        assertEquals(petOwner.getId(), readPetOwner.getId());
+        System.out.println("Read: " + readPetOwner);
     }
 
     @Test
+    @Order(3)
     void testUpdate() {
-        when(petOwnerRepository.save(petOwner)).thenReturn(petOwner);
-        PetOwner updated = petOwnerService.update(petOwner);
+        PetOwner updatedPetOwner = new PetOwner.Builder()
+                .copy(petOwner)
+                .setStreetAddress("456 Oak Street")
+                .build();
+        PetOwner updated = petOwnerService.update(updatedPetOwner);
         assertNotNull(updated);
-        assertEquals(petOwner.getId(), updated.getId());
-        verify(petOwnerRepository, times(1)).save(petOwner);
+        assertEquals(updatedPetOwner.getStreetAddress(), updated.getStreetAddress());
+        System.out.println("Updated: " + updated);
     }
 
-    @Test
-    void testDelete() {
-        doNothing().when(petOwnerRepository).deleteById(1L);
-        petOwnerService.delete(1L);
-        verify(petOwnerRepository, times(1)).deleteById(1L);
-    }
 
     @Test
+    @Order(4)
     void testGetAll() {
-        List<PetOwner> owners = new ArrayList<>();
-        owners.add(petOwner);
-        when(petOwnerRepository.findAll()).thenReturn(owners);
-        List<PetOwner> allOwners = (List<PetOwner>) petOwnerService.getall();
-        assertFalse(allOwners.isEmpty());
-        assertEquals(1, allOwners.size());
-        assertEquals(petOwner.getId(), allOwners.get(0).getId());
+        Set<PetOwner> petOwners = petOwnerService.getall();
+        assertNotNull(petOwners);
+        assertFalse(petOwners.isEmpty());
+        System.out.println("All PetOwners: " + petOwners);
+    }
+
+    @Test
+    @Order(5)
+    void testDelete() {
+        petOwnerService.delete(petOwner.getId());
+        PetOwner deleted = petOwnerService.read(petOwner.getId());
+        assertNull(deleted);
+        System.out.println("Deleted");
+
     }
 }

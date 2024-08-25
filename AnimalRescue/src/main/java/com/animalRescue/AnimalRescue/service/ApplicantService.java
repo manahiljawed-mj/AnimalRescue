@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class ApplicantService {
+public class ApplicantService implements IApplicantService {
     private final ApplicantRepository repository;
 
     @Autowired
