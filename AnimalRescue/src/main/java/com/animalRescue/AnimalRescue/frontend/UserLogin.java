@@ -70,12 +70,22 @@ public class UserLogin extends JFrame {
 		contentPane.add(passwordField);
 		
 		JButton btnNewButton = new JButton("Login");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				UserPanel upanel = new UserPanel();
+				upanel.setVisible(true);
+			}
+		});
 		btnNewButton.setBounds(121, 177, 85, 21);
 		contentPane.add(btnNewButton);
 		
 		JButton btnNewButton_1 = new JButton("Back");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				dispose();
+				LoginScreen lscreen3 = new LoginScreen();
+				lscreen3.setVisible(true);
 			}
 		});
 		btnNewButton_1.setBounds(230, 177, 85, 21);

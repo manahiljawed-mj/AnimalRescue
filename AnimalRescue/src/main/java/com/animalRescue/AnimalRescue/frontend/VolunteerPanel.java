@@ -9,6 +9,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JLabel;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class VolunteerPanel extends JFrame {
 
@@ -54,8 +56,18 @@ public class VolunteerPanel extends JFrame {
 		JMenuItem mntmNewMenuItem = new JMenuItem("Check History");
 		mnNewMenu.add(mntmNewMenuItem);
 		
-		JMenu mnNewMenu_1 = new JMenu("Logout");
+		JMenu mnNewMenu_1 = new JMenu("Account");
 		menuBar.add(mnNewMenu_1);
+		
+		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Logout");
+		mntmNewMenuItem_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				LoginScreen lscreen6 = new LoginScreen();
+				lscreen6.setVisible(true);
+			}
+		});
+		mnNewMenu_1.add(mntmNewMenuItem_1);
 		
 		JLabel lblNewLabel = new JLabel("Welcome!");
 		lblNewLabel.setBounds(186, 121, 55, 13);
