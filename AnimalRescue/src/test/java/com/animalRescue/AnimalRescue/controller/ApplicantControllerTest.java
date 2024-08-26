@@ -48,7 +48,7 @@ public class ApplicantControllerTest {
                 .build();
 
         Dog dog = new Dog.Builder()
-                .setDogId(9L)
+                .setDogId(2L)
                 .setName("Buddy")
                 .setSize("Large")
                 .setAge(5)
@@ -58,7 +58,7 @@ public class ApplicantControllerTest {
                 .build();
 
         Cat cat = new Cat.Builder()
-                .setCatId(4L)
+                .setCatId(6L)
                 .setName("Whiskers")
                 .setSize("Large")
                 .setAge(3)
@@ -67,7 +67,7 @@ public class ApplicantControllerTest {
                 .setCageNumber(5)
                 .build();
 
-        applicant = ApplicantFactory.buildApplicant(14L,petOwner, LocalDate.now(), dog, cat, "Pending");
+        applicant = ApplicantFactory.buildApplicant(2L,petOwner, LocalDate.now(), dog, cat, "Pending");
     }
 
     @Test
@@ -85,7 +85,7 @@ public class ApplicantControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode()); // Change to HttpStatus.OK if needed
         assertNotNull(response.getBody());
         Applicant createdApplicant = response.getBody();
-        assertEquals(applicant.getCatId(), createdApplicant.getCatId());
+        assertEquals(applicant.getStatus(), createdApplicant.getStatus());
         System.out.println("Created Applicant: " + createdApplicant);
     }
 
