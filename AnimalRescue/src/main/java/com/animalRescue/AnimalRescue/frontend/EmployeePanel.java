@@ -9,6 +9,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class EmployeePanel extends JFrame {
 
@@ -69,8 +71,18 @@ public class EmployeePanel extends JFrame {
 		JMenuItem mntmNewMenuItem_5 = new JMenuItem("By Animal");
 		mnNewMenu_2.add(mntmNewMenuItem_5);
 		
-		JMenu mnNewMenu_4 = new JMenu("Logout");
+		JMenu mnNewMenu_4 = new JMenu("Account");
 		menuBar.add(mnNewMenu_4);
+		
+		JMenuItem mntmNewMenuItem_6 = new JMenuItem("Logout");
+		mntmNewMenuItem_6.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				LoginScreen lscreen4 = new LoginScreen();
+				lscreen4.setVisible(true);
+			}
+		});
+		mnNewMenu_4.add(mntmNewMenuItem_6);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 

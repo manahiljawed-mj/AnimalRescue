@@ -9,6 +9,8 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class EmployeeLogin extends JFrame {
 
@@ -64,10 +66,24 @@ public class EmployeeLogin extends JFrame {
 		contentPane.add(passwordField);
 		
 		JButton btnNewButton = new JButton("Login");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				EmployeePanel epanel = new EmployeePanel();
+				epanel.setVisible(true);
+			}
+		});
 		btnNewButton.setBounds(100, 170, 85, 21);
 		contentPane.add(btnNewButton);
 		
 		JButton btnNewButton_1 = new JButton("Back");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				LoginScreen lscreen1 = new LoginScreen();
+				lscreen1.setVisible(true);
+			}
+		});
 		btnNewButton_1.setBounds(234, 170, 85, 21);
 		contentPane.add(btnNewButton_1);
 	}

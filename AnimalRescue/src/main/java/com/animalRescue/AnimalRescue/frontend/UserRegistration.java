@@ -6,9 +6,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class UserRegistration extends JFrame {
 
@@ -104,10 +107,25 @@ public class UserRegistration extends JFrame {
 		textField_4.setColumns(10);
 		
 		JButton btnNewButton = new JButton("Register");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "Registration Successful");
+				dispose();
+				UserLogin uloginscreen2 = new UserLogin();
+				uloginscreen2.setVisible(true);
+			}
+		});
 		btnNewButton.setBounds(130, 200, 85, 21);
 		contentPane.add(btnNewButton);
 		
 		JButton btnNewButton_1 = new JButton("Back");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				RegistrationScreen regscreen3 = new RegistrationScreen();
+				regscreen3.setVisible(true);
+			}
+		});
 		btnNewButton_1.setBounds(238, 200, 85, 21);
 		contentPane.add(btnNewButton_1);
 	}

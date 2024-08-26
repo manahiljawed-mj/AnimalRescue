@@ -47,6 +47,9 @@ public class AnimalRescue {
 		JButton btnNewButton = new JButton("Login");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				frmAnimalRescueApplication.dispose();
+				LoginScreen loginscreen = new LoginScreen();
+				loginscreen.setVisible(true);
 			}
 		});
 		btnNewButton.setBounds(171, 37, 85, 21);
@@ -55,6 +58,9 @@ public class AnimalRescue {
 		JButton btnNewButton_1 = new JButton("Register");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				frmAnimalRescueApplication.dispose();
+				RegistrationScreen regscreen = new RegistrationScreen();
+				regscreen.setVisible(true);
 			}
 		});
 		btnNewButton_1.setBounds(171, 82, 85, 21);

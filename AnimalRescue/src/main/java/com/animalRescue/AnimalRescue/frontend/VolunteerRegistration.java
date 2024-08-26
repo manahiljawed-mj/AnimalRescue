@@ -6,9 +6,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class VolunteerRegistration extends JFrame {
 
@@ -94,10 +97,25 @@ public class VolunteerRegistration extends JFrame {
 		textField_3.setColumns(10);
 		
 		JButton btnNewButton = new JButton("Register");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "Registration Successful");
+				dispose();
+				VolunteerLogin vloginscreen2 = new VolunteerLogin();
+				vloginscreen2.setVisible(true);
+			}
+		});
 		btnNewButton.setBounds(79, 184, 85, 21);
 		contentPane.add(btnNewButton);
 		
 		JButton btnNewButton_1 = new JButton("Back");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				RegistrationScreen regscreen5 = new RegistrationScreen();
+				regscreen5.setVisible(true);
+			}
+		});
 		btnNewButton_1.setBounds(252, 184, 85, 21);
 		contentPane.add(btnNewButton_1);
 	}
