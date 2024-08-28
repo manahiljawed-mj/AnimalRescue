@@ -4,6 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class UpdateVolunteer extends JPanel {
 
@@ -35,10 +41,15 @@ public class UpdateVolunteer extends JPanel {
         // ComboBox to select Volunteer ID
         cmbVolunteerId = new JComboBox<>();
         cmbVolunteerId.setBounds(318, 115, 300, 30);
-        // Add items to cmbVolunteerId here
-        cmbVolunteerId.addItem("V001"); // Example item
-        cmbVolunteerId.addItem("V002"); // Example item
-        // You would typically populate this with real IDs from your data source
+        cmbVolunteerId.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String selectedItem = (String) cmbVolunteerId.getSelectedItem();
+                if (selectedItem != null) {
+                    String id = selectedItem.split(" - ")[0]; // Extract ID from the selected item
+                    fetchVolunteerDetails(id);
+                }
+            }
+        });
         add(cmbVolunteerId);
 
         JLabel lblFirstName = new JLabel("First Name:");
@@ -104,6 +115,11 @@ public class UpdateVolunteer extends JPanel {
         JButton btnUpdate = new JButton("Update");
         btnUpdate.setFont(new Font("Dialog", Font.BOLD, 16));
         btnUpdate.setBounds(150, 500, 150, 40);
+        btnUpdate.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateVolunteer();
+            }
+        });
         add(btnUpdate);
 
         JButton btnBack = new JButton("Back");
@@ -115,5 +131,125 @@ public class UpdateVolunteer extends JPanel {
             }
         });
         add(btnBack);
+
+        // Populate ComboBox with volunteer IDs
+        populateVolunteerIds();
     }
+
+    private void populateVolunteerIds() {
+        try {
+            URL url = new URL("http://localhost:8080/animalRescue/volunteer/getall"); // Endpoint to get volunteer IDs
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Accept", "application/json");
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                StringBuilder response = new StringBuilder();
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"))) {
+                    String line;
+                    while ((line = in.readLine()) != null) {
+                        response.append(line);
+                    }
+                }
+
+                // Assuming the response is a JSON array of volunteer objects
+                JSONArray jsonArray = new JSONArray(response.toString());
+                cmbVolunteerId.removeAllItems(); // Clear previous items
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    int id = jsonObject.getInt("id"); // Get ID as an integer
+                    String firstName = jsonObject.getString("firstName");
+                    String lastName = jsonObject.getString("lastName");
+                    // Format: "ID - FirstName LastName"
+                    cmbVolunteerId.addItem(String.format("%d - %s %s", id, firstName, lastName));
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Error: Unable to fetch volunteer IDs.");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+        }
+    }
+
+    
+    
+    private void fetchVolunteerDetails(String id) {
+        try {
+            URL url = new URL("http://localhost:8080/animalRescue/volunteer/read/" + id);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Accept", "application/json");
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                StringBuilder response = new StringBuilder();
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"))) {
+                    String line;
+                    while ((line = in.readLine()) != null) {
+                        response.append(line);
+                    }
+                }
+
+                JSONObject jsonObject = new JSONObject(response.toString());
+                txtFirstName.setText(jsonObject.getString("firstName"));
+                txtLastName.setText(jsonObject.getString("lastName"));
+                txtContactNo.setText(jsonObject.getString("contactNo"));
+                txtEmailAddress.setText(jsonObject.getString("emailAddress"));
+                txtStreetAddress.setText(jsonObject.getString("streetAddress"));
+                txtAvailability.setText(jsonObject.getString("availability"));
+            } else {
+                JOptionPane.showMessageDialog(null, "Error: Unable to fetch volunteer details.");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+        }
+    }
+
+    private void updateVolunteer() {
+        String selectedItem = (String) cmbVolunteerId.getSelectedItem();
+        if (selectedItem == null) {
+            JOptionPane.showMessageDialog(null, "Please select a volunteer ID.");
+            return;
+        }
+        
+        String id = selectedItem.split(" - ")[0]; // Extract ID from the selected item
+
+        // Create JSON object from form data
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", id); // Include the ID
+        jsonObject.put("firstName", txtFirstName.getText());
+        jsonObject.put("lastName", txtLastName.getText());
+        jsonObject.put("contactNo", txtContactNo.getText());
+        jsonObject.put("emailAddress", txtEmailAddress.getText());
+        jsonObject.put("streetAddress", txtStreetAddress.getText());
+        jsonObject.put("availability", txtAvailability.getText());
+
+        try {
+            URL url = new URL("http://localhost:8080/animalRescue/volunteer/update");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("PUT");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+
+            try (java.io.OutputStream os = connection.getOutputStream()) {
+                byte[] input = jsonObject.toString().getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                JOptionPane.showMessageDialog(null, "Volunteer updated successfully.");
+            } else {
+                JOptionPane.showMessageDialog(null, "Error: Unable to update volunteer.");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+        }
+    }
+
+
 }

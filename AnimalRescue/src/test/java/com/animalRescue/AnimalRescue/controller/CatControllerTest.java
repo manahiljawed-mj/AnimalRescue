@@ -34,7 +34,7 @@ public class CatControllerTest {
     @BeforeEach
     public void setUp() {
 
-        whiskers = CatFactory.buildCat(6L,"Whiskers", "Small", 3, "Female", "Pitbull", 201);
+        whiskers = CatFactory.buildCat(2,"Whiskers", "Small", 3, "Female", "Pitbull", 201);
     }
 
     @Test

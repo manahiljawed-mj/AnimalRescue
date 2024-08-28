@@ -27,7 +27,7 @@ public class MedicalRecordServiceTest {
     private MedicalRecordService medicalRecordService;
 
     Dog dog = new Dog.Builder()
-            .setDogId(1L)
+            .setDogId(9L)
             .setName("Buddy")
             .setSize("Large")
             .setAge(5)
@@ -37,7 +37,7 @@ public class MedicalRecordServiceTest {
             .build();
 
     Cat cat = new Cat.Builder()
-            .setCatId(2L)
+            .setCatId(4L)
             .setName("Whiskers")
             .setSize("Large")
             .setAge(3)
@@ -46,7 +46,7 @@ public class MedicalRecordServiceTest {
             .setCageNumber(5)
             .build();
 
-    private final MedicalRecord medicalRecord =MedicalRecordFactory.buildMedicalRecord(1L,dog,cat,LocalDate.now(),"Med1","Good",LocalDate.now().plusMonths(6),"Annual checkup");
+    private final MedicalRecord medicalRecord =MedicalRecordFactory.buildMedicalRecord(2L,dog,cat,LocalDate.now(),"Med1","Good",LocalDate.now().plusMonths(6),"Annual checkup");
 
     @Test
     @Order(1)

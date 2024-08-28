@@ -1,9 +1,18 @@
 package AnimalRescueFrontend;
 
 import javax.swing.*;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class DeletePetOwner extends JPanel {
 
@@ -18,6 +27,20 @@ public class DeletePetOwner extends JPanel {
     private JRadioButton rdbtnDog;
     private JComboBox<String> cboCat;
     private JComboBox<String> cboDog;
+    
+    String petName;
+    String petsize;
+    String petAge;
+    String petGender;
+    String petBreed;
+    String petCageNo;
+    String petFinalId;
+    
+    String ownerFirstName;
+    String ownerLastName;
+    String ownerContactName;
+    String ownerEmail;
+    String ownerStreet;
 
     public DeletePetOwner(CardLayout cardLayout, JPanel cardPanel) {
         setLayout(null);
@@ -36,8 +59,17 @@ public class DeletePetOwner extends JPanel {
         lblPetOwnerId.setBounds(150, 135, 119, 30);
         add(lblPetOwnerId);
 
-        cboPetOwnerId = new JComboBox<>(new String[]{"Select ID", "PO1", "PO2", "PO3"});
+        cboPetOwnerId = new JComboBox<>(new String[]{"Select ID"});
         cboPetOwnerId.setBounds(318, 135, 300, 30);
+        cboPetOwnerId.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String selectedItem = (String) cboPetOwnerId.getSelectedItem();
+                if (selectedItem != null) {
+                    String id = selectedItem.split(" - ")[0]; // Extract ID from the selected item
+                    fetchPetOwnerById(id);
+                }
+            }
+        });
         add(cboPetOwnerId);
 
         JLabel lblFirstName = new JLabel("First Name:");
@@ -47,9 +79,8 @@ public class DeletePetOwner extends JPanel {
         add(lblFirstName);
 
         txtName = new JTextField();
-        txtName.setEnabled(false);
-        txtName.setEditable(false);
         txtName.setBounds(318, 175, 300, 30);
+        txtName.setEditable(false);
         add(txtName);
 
         JLabel lblLastName = new JLabel("Last Name:");
@@ -59,9 +90,8 @@ public class DeletePetOwner extends JPanel {
         add(lblLastName);
 
         txtBreed = new JTextField();
-        txtBreed.setEnabled(false);
-        txtBreed.setEditable(false);
         txtBreed.setBounds(318, 215, 300, 30);
+        txtBreed.setEditable(false);
         add(txtBreed);
 
         JLabel lblContactNo = new JLabel("Contact No:");
@@ -71,9 +101,8 @@ public class DeletePetOwner extends JPanel {
         add(lblContactNo);
 
         txtAge = new JTextField();
-        txtAge.setEnabled(false);
-        txtAge.setEditable(false);
         txtAge.setBounds(318, 255, 300, 30);
+        txtAge.setEditable(false);
         add(txtAge);
 
         JLabel lblEmailAddress = new JLabel("Email Address:");
@@ -83,9 +112,8 @@ public class DeletePetOwner extends JPanel {
         add(lblEmailAddress);
 
         txtGender = new JTextField();
-        txtGender.setEnabled(false);
-        txtGender.setEditable(false);
         txtGender.setBounds(318, 295, 300, 30);
+        txtGender.setEditable(false);
         add(txtGender);
 
         JLabel lblStreetAddress = new JLabel("Street Address");
@@ -95,14 +123,12 @@ public class DeletePetOwner extends JPanel {
         add(lblStreetAddress);
 
         txtSize = new JTextField();
-        txtSize.setEnabled(false);
-        txtSize.setEditable(false);
         txtSize.setBounds(318, 335, 300, 30);
+        txtSize.setEditable(false);
         add(txtSize);
 
         // Radio Buttons for Cat and Dog
         rdbtnCat = new JRadioButton("Cat");
-        rdbtnCat.setEnabled(false);
         rdbtnCat.setFont(new Font("Dialog", Font.BOLD, 16));
         rdbtnCat.setForeground(SystemColor.controlLtHighlight);
         rdbtnCat.setBackground(new Color(0, 128, 128));
@@ -116,7 +142,6 @@ public class DeletePetOwner extends JPanel {
         add(rdbtnCat);
 
         rdbtnDog = new JRadioButton("Dog");
-        rdbtnDog.setEnabled(false);
         rdbtnDog.setFont(new Font("Dialog", Font.BOLD, 16));
         rdbtnDog.setForeground(SystemColor.controlLtHighlight);
         rdbtnDog.setBackground(new Color(0, 128, 128));
@@ -134,20 +159,26 @@ public class DeletePetOwner extends JPanel {
 
         // Dropdown for Cat
         cboCat = new JComboBox<>(new String[]{"Select Cat", "Persian", "Siamese", "Maine Coon"});
-        cboCat.setBounds(318, 408, 300, 30);
+        cboCat.setBounds(318, 404, 300, 30);
+        cboCat.setEnabled(true);
         add(cboCat);
 
         // Dropdown for Dog
         cboDog = new JComboBox<>(new String[]{"Select Dog", "Beagle", "Bulldog", "Labrador"});
-        cboDog.setBounds(318, 450, 300, 30);
+        cboDog.setBounds(318, 446, 300, 30);
         cboDog.setEnabled(false);
         add(cboDog);
 
         // Buttons
-        JButton btnDelete = new JButton("Delete");
-        btnDelete.setFont(new Font("Dialog", Font.BOLD, 16));
-        btnDelete.setBounds(150, 500, 150, 40);
-        add(btnDelete);
+        JButton btnAdd = new JButton("Delete");
+        btnAdd.setFont(new Font("Dialog", Font.BOLD, 16));
+        btnAdd.setBounds(150, 500, 150, 40);
+        btnAdd.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                deletePetOwner();
+            }
+        });
+        add(btnAdd);
 
         JButton btnBack = new JButton("Back");
         btnBack.setFont(new Font("Dialog", Font.BOLD, 16));
@@ -160,11 +191,240 @@ public class DeletePetOwner extends JPanel {
         add(btnBack);
 
         // Set default state
+        fetchPetOwnerData();
         togglePetSelection(true);
     }
 
     private void togglePetSelection(boolean isCatSelected) {
-        cboCat.setEnabled(false);
+        cboCat.setEnabled(isCatSelected);
         cboDog.setEnabled(!isCatSelected);
+        if (isCatSelected) {
+            fetchCatData();
+        } else {
+            fetchDogData();
+        }
     }
+    
+    private void fetchPetOwnerData() {
+        try {
+            URL url = new URL("http://localhost:8080/animalRescue/petOwner/getall"); // Endpoint to get cat IDs
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Accept", "application/json");
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                StringBuilder response = new StringBuilder();
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"))) {
+                    String line;
+                    while ((line = in.readLine()) != null) {
+                        response.append(line);
+                    }
+                }
+
+                JSONArray jsonArray = new JSONArray(response.toString());
+                cboPetOwnerId.removeAllItems(); // Clear previous items
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    int id = jsonObject.getInt("id");
+                    String firstName = jsonObject.optString("firstName", "N/A");
+                    ownerFirstName=jsonObject.optString("firstName", "N/A");
+                    txtName.setText(ownerFirstName);
+                    String lastName = jsonObject.optString("lastName", "N/A");
+                    
+                    ownerLastName=jsonObject.optString("lastName", "N/A");
+                    txtBreed.setText(lastName);
+                    ownerContactName=jsonObject.optString("contactNumber", "N/A");
+                    txtAge.setText(ownerContactName);
+                    ownerEmail=jsonObject.optString("emailAddress", "N/A");
+                    txtGender.setText(ownerEmail);
+                    ownerStreet=jsonObject.optString("streetAddress", "N/A");
+                    txtSize.setText(ownerStreet);
+                    cboPetOwnerId.addItem(String.format("%d - %s %s", id, firstName, lastName));
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Error: Unable to fetch petOwner IDs.");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+        }
+    }
+    
+    private void fetchCatData() {
+        try {
+            URL url = new URL("http://localhost:8080/animalRescue/cat/getall"); // Endpoint to get cat IDs
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Accept", "application/json");
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                StringBuilder response = new StringBuilder();
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"))) {
+                    String line;
+                    while ((line = in.readLine()) != null) {
+                        response.append(line);
+                    }
+                }
+
+                JSONArray jsonArray = new JSONArray(response.toString());
+                cboCat.removeAllItems(); // Clear previous items
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    int id = jsonObject.getInt("catId");
+                    String name = jsonObject.optString("name", "N/A");
+                    petName=jsonObject.optString("name", "N/A");
+                    String breed = jsonObject.optString("breed", "N/A");
+                    petBreed=jsonObject.optString("breed", "N/A");
+                    petCageNo=jsonObject.optString("cageNumber", "N/A");
+                    petGender=jsonObject.optString("gender", "N/A");
+                    petsize=jsonObject.optString("size", "N/A");
+                    petAge=jsonObject.optString("age", "N/A");
+                    petFinalId=String.valueOf(jsonObject.opt("catId"));
+                    cboCat.addItem(String.format("%d - %s %s", id, name, breed));
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Error: Unable to fetch cat IDs.");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+        }
+    }
+    
+    private void fetchPetOwnerById(String ownerid) {
+        try {
+            URL url = new URL("http://localhost:8080/animalRescue/petOwner/read/" + ownerid);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Accept", "application/json");
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                StringBuilder response = new StringBuilder();
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"))) {
+                    String line;
+                    while ((line = in.readLine()) != null) {
+                        response.append(line);
+                    }
+                }
+
+                JSONObject jsonObject = new JSONObject(response.toString());
+                int id = jsonObject.getInt("id");
+                String firstName = jsonObject.optString("firstName", "N/A");
+                ownerFirstName=jsonObject.optString("firstName", "N/A");
+                txtName.setText(ownerFirstName);
+                String lastName = jsonObject.optString("lastName", "N/A");
+                
+                ownerLastName=jsonObject.optString("lastName", "N/A");
+                txtBreed.setText(lastName);
+                ownerContactName=jsonObject.optString("contactNumber", "N/A");
+                txtAge.setText(ownerContactName);
+                ownerEmail=jsonObject.optString("emailAddress", "N/A");
+                txtGender.setText(ownerEmail);
+                ownerStreet=jsonObject.optString("streetAddress", "N/A");
+                txtSize.setText(ownerStreet);// Convert integer to string
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Error: Unable to fetch cat details.");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+        }
+    }
+
+
+    private void fetchDogData() {
+        try {
+            URL url = new URL("http://localhost:8080/animalRescue/dog/getall"); // Endpoint to get dog IDs
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Accept", "application/json");
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                StringBuilder response = new StringBuilder();
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"))) {
+                    String line;
+                    while ((line = in.readLine()) != null) {
+                        response.append(line);
+                    }
+                }
+
+                JSONArray jsonArray = new JSONArray(response.toString());
+                cboDog.removeAllItems(); // Clear previous items
+                for (int i = 0; i < jsonArray.length(); i++) {
+                  
+                   
+           
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    int id = jsonObject.getInt("dogId");
+                    String name = jsonObject.optString("name", "N/A");
+                    petName=jsonObject.optString("name", "N/A");
+                    String breed = jsonObject.optString("breed", "N/A");
+                    petBreed=jsonObject.optString("breed", "N/A");
+                    petCageNo=jsonObject.optString("cageNumber", "N/A");
+                    petGender=jsonObject.optString("gender", "N/A");
+                    petsize=jsonObject.optString("size", "N/A");
+                    petAge=jsonObject.optString("age", "N/A");
+                    petFinalId=String.valueOf(jsonObject.opt("dogId"));
+                    cboDog.addItem(String.format("%d - %s %s", id, name, breed));
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Error: Unable to fetch dog IDs.");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+        }
+    }
+    
+    private void deletePetOwner() {
+        String selectedItem = (String) cboPetOwnerId.getSelectedItem();
+        if (selectedItem == null) {
+            JOptionPane.showMessageDialog(null, "Please select a volunteer ID.");
+            return;
+        }
+        
+        String id = selectedItem.split(" - ")[0]; // Extract ID from the selected item
+
+        // Create JSON object with only the ID
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", id); // Include only the ID
+
+        try {
+            URL url = new URL("http://localhost:8080/animalRescue/petOwner/delete/"+id);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("DELETE");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+
+            try (java.io.OutputStream os = connection.getOutputStream()) {
+                byte[] input = jsonObject.toString().getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                JOptionPane.showMessageDialog(null, "PetOwner Deleted successfully.");
+                // Optionally, clear the text fields after deletion
+                txtName.setText("");
+                txtBreed.setText("");
+                txtAge.setText("");
+                txtSize.setText("");
+                txtGender.setText("");
+                // Optionally, re-populate the ComboBox
+                fetchPetOwnerData();
+            } else {
+                JOptionPane.showMessageDialog(null, "Error: Unable to Delete PetOwner.");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+        }
+    }
+    
+    
 }

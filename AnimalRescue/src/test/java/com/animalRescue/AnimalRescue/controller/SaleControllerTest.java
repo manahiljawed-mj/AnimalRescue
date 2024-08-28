@@ -38,7 +38,7 @@ public class SaleControllerTest {
                 .build();
 
         Dog dog = new Dog.Builder()
-                .setDogId(2L)
+                .setDogId(9L)
                 .setName("Buddy")
                 .setSize("Large")
                 .setAge(5)
@@ -48,7 +48,7 @@ public class SaleControllerTest {
                 .build();
 
         Cat cat = new Cat.Builder()
-                .setCatId(3L)
+                .setCatId(4L)
                 .setName("Whiskers")
                 .setSize("Large")
                 .setAge(3)
@@ -58,7 +58,7 @@ public class SaleControllerTest {
                 .build();
 
        Applicant applicant= new Applicant.Builder()
-                 .setId(1L)
+                 .setId(1l)
                  .setCatId(cat)
                  .setDogId(dog)
                  .setPetOwner(petOwner)

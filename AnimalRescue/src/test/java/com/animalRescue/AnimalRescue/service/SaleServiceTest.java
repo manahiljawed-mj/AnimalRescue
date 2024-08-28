@@ -37,7 +37,7 @@ public class SaleServiceTest {
                 .build();
 
         Dog dog = new Dog.Builder()
-                .setDogId(1L)
+                .setDogId(9L)
                 .setName("Buddy")
                 .setSize("Large")
                 .setAge(5)
@@ -47,7 +47,7 @@ public class SaleServiceTest {
                 .build();
 
         Cat cat = new Cat.Builder()
-                .setCatId(2L)
+                .setCatId(4L)
                 .setName("Whiskers")
                 .setSize("Large")
                 .setAge(3)
@@ -70,10 +70,10 @@ public class SaleServiceTest {
                 .setLastName("Jawed")
                 .setContactNo("1234")
                 .setEmailAddress("abc@gmail.com")
-                .setId(3L)
+                .setId(2L)
                 .build();
 
-        sale= SaleFactory.buildSale(1L,applicant,employee,LocalDate.now(),785.2);
+        sale= SaleFactory.buildSale(3L,applicant,employee,LocalDate.now(),785.2);
     }
 
     @Test

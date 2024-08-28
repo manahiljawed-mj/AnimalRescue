@@ -1,9 +1,15 @@
 package AnimalRescueFrontend;
 
 import javax.swing.*;
+import org.json.JSONObject;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class CreateCat extends JPanel {
 
@@ -88,6 +94,60 @@ public class CreateCat extends JPanel {
         JButton btnAdd = new JButton("Add");
         btnAdd.setFont(new Font("Dialog", Font.BOLD, 16));
         btnAdd.setBounds(150, 500, 150, 40);
+        btnAdd.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    // Create JSON string manually with correct sequence
+                	String jsonInputString = String.format(
+                            "{\"name\":\"%s\",\"size\":\"%s\",\"age\":\"%s\",\"gender\":\"%s\",\"breed\":\"%s\",\"cageNumber\":\"%s\"}",
+                            txtName.getText(),
+                            txtSize.getText(),
+                            txtAge.getText(),
+                            txtGender.getText(),
+                            txtBreed.getText(),
+                            txtCageNumber.getText()
+                        );
+
+                    // Set up HTTP connection to send data to backend
+                    URL url = new URL("http://localhost:8080/animalRescue/cat/create"); // Replace with your actual endpoint
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setRequestProperty("Content-Type", "application/json; utf-8");
+                    connection.setDoOutput(true);
+
+                    // Send JSON input string to the backend
+                    try (OutputStream os = connection.getOutputStream()) {
+                        byte[] input = jsonInputString.getBytes("utf-8");
+                        os.write(input, 0, input.length);
+                    }
+
+                    // Check for successful response
+                    int responseCode = connection.getResponseCode();
+                    StringBuilder response = new StringBuilder();
+                    if (responseCode == HttpURLConnection.HTTP_OK) {
+                        try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"))) {
+                            String line;
+                            while ((line = in.readLine()) != null) {
+                                response.append(line);
+                            }
+                        }
+
+                        // Parse JSON response to extract dogId
+                        JSONObject jsonResponse = new JSONObject(response.toString());
+                        String catId = jsonResponse.optString("catId", "No ID returned");
+
+                        JOptionPane.showMessageDialog(null, "Cat created successfully!\nCat ID: " + catId);
+                        cardLayout.show(cardPanel, "Cat");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Error: Unable to create Cat.");
+                    }
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+                }
+            }
+        });
         add(btnAdd);
 
         JButton btnBack = new JButton("Back");
@@ -95,7 +155,7 @@ public class CreateCat extends JPanel {
         btnBack.setBounds(472, 500, 150, 40);
         btnBack.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cardPanel, "Cat"); // Change "MainMenu" to the actual name of the main panel
+                cardLayout.show(cardPanel, "Cat"); // Change "Cat" to the actual name of the previous panel
             }
         });
         add(btnBack);

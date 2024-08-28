@@ -1,6 +1,8 @@
 package com.animalRescue.AnimalRescue.service;
 
 import com.animalRescue.AnimalRescue.domain.Applicant;
+import com.animalRescue.AnimalRescue.domain.Cat;
+import com.animalRescue.AnimalRescue.domain.Dog;
 import com.animalRescue.AnimalRescue.repository.ApplicantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,18 @@ public class ApplicantService implements IApplicantService {
 
     public Applicant create(Applicant applicant) {
         return repository.save(applicant);
+    }
+
+    public Set<Applicant> readStatus(String status) {
+        return repository.findByStatus(status).stream().collect(Collectors.toSet());
+    }
+
+    public Applicant readCatId(Cat cat) {
+        return (Applicant) repository.findByCatId(cat).orElse(null);
+    }
+
+    public Applicant readDogId(Dog dog) {
+        return (Applicant) repository.findByDogId(dog).orElse(null);
     }
 
 

@@ -26,7 +26,7 @@ public class PetOwnerControllerTest {
 
     @BeforeEach
     public void setUp() {
-        petOwner = PetOwnerFactory.buildPetOwner(1L,"Manahil","Jawed", "12345678", "abc@gmail.com","abc street");
+        petOwner = PetOwnerFactory.buildPetOwner(1,"Manahil","Jawed", "12345678", "abc@gmail.com","abc street");
     }
 
     @Test

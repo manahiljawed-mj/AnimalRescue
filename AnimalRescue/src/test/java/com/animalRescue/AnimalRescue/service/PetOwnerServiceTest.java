@@ -27,7 +27,7 @@ public class PetOwnerServiceTest {
 
     @BeforeEach
     void setUp() {
-        petOwner = PetOwnerFactory.buildPetOwner(1L,"Manahil","Jawed", "12345678", "abc@gmail.com","abc street");
+        petOwner = PetOwnerFactory.buildPetOwner(2,"Manahil","Jawed", "12345678", "abc@gmail.com","abc street");
     }
 
     @Test

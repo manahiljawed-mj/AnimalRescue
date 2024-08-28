@@ -40,7 +40,7 @@ public class OwnerRecordServiceTest {
                 .build();
 
         Dog dog = new Dog.Builder()
-                .setDogId(1L)
+                .setDogId(9L)
                 .setName("Buddy")
                 .setSize("Large")
                 .setAge(5)
@@ -50,7 +50,7 @@ public class OwnerRecordServiceTest {
                 .build();
 
         Cat cat = new Cat.Builder()
-                .setCatId(2L)
+                .setCatId(4L)
                 .setName("Whiskers")
                 .setSize("Large")
                 .setAge(3)
@@ -59,7 +59,7 @@ public class OwnerRecordServiceTest {
                 .setCageNumber(5)
                 .build();
 
-        ownerRecord = OwnerRecordFactory.buildOwnerRecord(1L,dog,cat,petOwner, LocalDate.now(),LocalDate.now().plusMonths(6));
+        ownerRecord = OwnerRecordFactory.buildOwnerRecord(4L,dog,cat,petOwner, LocalDate.now(),LocalDate.now().plusMonths(6));
     }
 
     @Test

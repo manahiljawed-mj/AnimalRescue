@@ -1,9 +1,17 @@
 package AnimalRescueFrontend;
 
 import javax.swing.*;
+
+import org.json.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.regex.Pattern;
 
 public class CreateVolunteer extends JPanel {
 
@@ -88,6 +96,108 @@ public class CreateVolunteer extends JPanel {
         JButton btnAdd = new JButton("Add");
         btnAdd.setFont(new Font("Dialog", Font.BOLD, 16));
         btnAdd.setBounds(150, 500, 150, 40);
+        btnAdd.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Reset field background colors
+                resetFieldColors();
+
+                // Validate inputs
+                boolean valid = true;
+                StringBuilder errorMessage = new StringBuilder();
+
+                if (!isValidName(txtFirstName.getText())) {
+                    txtFirstName.setBackground(Color.PINK);
+                    errorMessage.append("First Name must be alphabets and no longer than 15 characters.\n");
+                    valid = false;
+                }
+
+                if (!isValidName(txtLastName.getText())) {
+                    txtLastName.setBackground(Color.PINK);
+                    errorMessage.append("Last Name must be alphabets and no longer than 15 characters.\n");
+                    valid = false;
+                }
+
+                if (!isValidContactNo(txtContactNo.getText())) {
+                    txtContactNo.setBackground(Color.PINK);
+                    errorMessage.append("Contact No must be numeric and up to 10 digits.\n");
+                    valid = false;
+                }
+
+                if (!isValidEmail(txtEmailAddress.getText())) {
+                    txtEmailAddress.setBackground(Color.PINK);
+                    errorMessage.append("Invalid email address format.\n");
+                    valid = false;
+                }
+
+                if (txtStreetAddress.getText().length() > 25) {
+                    txtStreetAddress.setBackground(Color.PINK);
+                    errorMessage.append("Street Address cannot be longer than 25 characters.\n");
+                    valid = false;
+                }
+
+                if (txtAvailability.getText().length() > 8) {
+                    txtAvailability.setBackground(Color.PINK);
+                    errorMessage.append("Availability cannot be longer than 8 characters.\n");
+                    valid = false;
+                }
+
+                if (!valid) {
+                    JOptionPane.showMessageDialog(null, errorMessage.toString());
+                    return;
+                }
+
+                // Proceed with HTTP request if all validations pass
+                try {
+                    // Create JSON string manually
+                    String jsonInputString = String.format(
+                        "{\"firstName\":\"%s\",\"lastName\":\"%s\",\"contactNo\":\"%s\",\"emailAddress\":\"%s\",\"streetAddress\":\"%s\",\"availability\":\"%s\"}",
+                        txtFirstName.getText(),
+                        txtLastName.getText(),
+                        txtContactNo.getText(),
+                        txtEmailAddress.getText(),
+                        txtStreetAddress.getText(),
+                        txtAvailability.getText()
+                    );
+
+                    // Set up HTTP connection to send data to backend
+                    URL url = new URL("http://localhost:8080/animalRescue/volunteer/create"); // Replace with your actual endpoint
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setRequestProperty("Content-Type", "application/json; utf-8");
+                    connection.setDoOutput(true);
+
+                    // Send JSON input string to the backend
+                    try (OutputStream os = connection.getOutputStream()) {
+                        byte[] input = jsonInputString.getBytes("utf-8");
+                        os.write(input, 0, input.length);
+                    }
+
+                    // Check for successful response
+                    int responseCode = connection.getResponseCode();
+                    StringBuilder response = new StringBuilder();
+                    if (responseCode == HttpURLConnection.HTTP_OK) {
+                        try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"))) {
+                            String line;
+                            while ((line = in.readLine()) != null) {
+                                response.append(line);
+                            }
+                        }
+
+                        // Parse JSON response to extract ID
+                        JSONObject jsonResponse = new JSONObject(response.toString());
+                        String id = jsonResponse.optString("id", "No ID returned");
+
+                        JOptionPane.showMessageDialog(null, "Volunteer created successfully!\nVolunteer ID: " + id);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Error: Unable to create volunteer.");
+                    }
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+                }
+            }
+        });
         add(btnAdd);
 
         JButton btnBack = new JButton("Back");
@@ -99,5 +209,27 @@ public class CreateVolunteer extends JPanel {
             }
         });
         add(btnBack);
+    }
+
+    private void resetFieldColors() {
+        txtFirstName.setBackground(Color.WHITE);
+        txtLastName.setBackground(Color.WHITE);
+        txtContactNo.setBackground(Color.WHITE);
+        txtEmailAddress.setBackground(Color.WHITE);
+        txtStreetAddress.setBackground(Color.WHITE);
+        txtAvailability.setBackground(Color.WHITE);
+    }
+
+    private boolean isValidName(String name) {
+        return name.matches("[a-zA-Z]{1,15}");
+    }
+
+    private boolean isValidContactNo(String contactNo) {
+        return contactNo.matches("\\d{1,10}");
+    }
+
+    private boolean isValidEmail(String email) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        return Pattern.compile(emailRegex).matcher(email).matches();
     }
 }

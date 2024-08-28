@@ -1,12 +1,15 @@
 package AnimalRescueFrontend;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class DisplayCat extends JPanel {
 
@@ -17,267 +20,241 @@ public class DisplayCat extends JPanel {
     private JTextField txtGender;
     private JTextField txtSize;
     private JTextField txtCageNumber;
-    private JComboBox<String> cboCatSelection; // Declare JComboBox
-    private JRadioButton rdbtnSingleCatRecord;
-    private JRadioButton rdbtnAll;
-    private JPanel formPanel;
-    private JPanel tablePanel;
-    private CardLayout cardLayout;
-    private JPanel cardPanel; // Ensure this is declared
-    private JTable table;
-    private JScrollPane tableScrollPane;
-    private JButton btnBack1; // Declare btnBack1 as a member variable
+    private JComboBox<String> cboOptions;
 
     public DisplayCat(CardLayout cardLayout, JPanel cardPanel) {
-        this.cardLayout = cardLayout;
-        this.cardPanel = cardPanel; // Initialize the instance variable
         setLayout(null);
         setBackground(new Color(0, 128, 128));
 
-        // Title Label
-        JLabel lblTitle = new JLabel("Display New Cat Record");
+        JLabel lblTitle = new JLabel("Display Cat Record");
         lblTitle.setFont(new Font("Dialog", Font.BOLD, 24));
         lblTitle.setForeground(SystemColor.controlLtHighlight);
         lblTitle.setBounds(254, 55, 350, 40);
         add(lblTitle);
-
-     // Initialize btnBack1
-        btnBack1 = new JButton("Back");
-        btnBack1.setFont(new Font("Dialog", Font.BOLD, 16));
-        btnBack1.setBounds(637, 520, 150, 30);
-        btnBack1.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cardPanel, "Cat"); // Correctly reference cardPanel
-            }
-        });// Initially hidden
-        add(btnBack1);
-        // Radio Buttons for selecting view
-        rdbtnSingleCatRecord = new JRadioButton("Single Cat Record");
-        rdbtnSingleCatRecord.setForeground(SystemColor.controlLtHighlight);
-        rdbtnSingleCatRecord.setBackground(new Color(0, 128, 128));
-        rdbtnSingleCatRecord.setBounds(215, 110, 189, 23);
-        rdbtnSingleCatRecord.setSelected(true); // Default selection
-        rdbtnSingleCatRecord.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                showSingleCatRecord();
-            }
-        });
-        add(rdbtnSingleCatRecord);
-
-        rdbtnAll = new JRadioButton("All");
-        rdbtnAll.setForeground(SystemColor.controlLtHighlight);
-        rdbtnAll.setBackground(new Color(0, 128, 128));
-        rdbtnAll.setBounds(440, 110, 149, 23);
-        rdbtnAll.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                showAllRecords();
-            }
-        });
-        add(rdbtnAll);
-
-        // Group the radio buttons
-        ButtonGroup group = new ButtonGroup();
-        group.add(rdbtnSingleCatRecord);
-        group.add(rdbtnAll);
-
-        // Form Panel for Single Cat Record
-        formPanel = new JPanel();
-        formPanel.setForeground(SystemColor.desktop);
-        formPanel.setLayout(null);
-        formPanel.setBackground(new Color(0, 128, 128));
-        formPanel.setBounds(20, 150, 760, 400); // Adjusted for padding
-        add(formPanel);
-
-        // Labels and Text Fields for Single Cat Record
-        createFormComponents();
-
-        // Table Panel for All Records
-        tablePanel = new JPanel(new BorderLayout());
-        tablePanel.setBackground(SystemColor.desktop);
-        tablePanel.setBounds(7, 170, 780, 80); // Adjust initial size for testing
-        tablePanel.setVisible(false); // Initially hidden
-
-        // Initialize and add the table to the panel
-        initializeTable();
-        add(tablePanel);
-
         
+        String[] options = {"Select Cat", "Option 1", "Option 2"}; // Example options
+        cboOptions = new JComboBox<>(options);
+        cboOptions.setBounds(318, 153, 300, 30);
+        cboOptions.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String selectedItem = (String) cboOptions.getSelectedItem();
+                if (selectedItem != null) {
+                    String id = selectedItem.split(" - ")[0]; // Extract ID from the selected item
+                    fetchCatDetails(id);
+                }
+            }
+        });
+        add(cboOptions);
 
-        showSingleCatRecord(); // Default view
-    }
-
-    private void createFormComponents() {
-        // Create and add dropdown for selecting a cat
-        JLabel lblSelectCat = new JLabel("Select Cat:");
-        lblSelectCat.setFont(new Font("Dialog", Font.BOLD, 16));
-        lblSelectCat.setForeground(SystemColor.controlLtHighlight);
-        lblSelectCat.setBounds(139, 20, 100, 30);
-        formPanel.add(lblSelectCat);
-
-        // Sample data for JComboBox
-        String[] catNames = {"Tom", "Whiskers", "Fluffy"}; // Example cat names
-        cboCatSelection = new JComboBox<>(catNames);
-        cboCatSelection.setBounds(318, 20, 300, 30);
-        formPanel.add(cboCatSelection);
-
-        // Create and add form components
         JLabel lblName = new JLabel("Name:");
         lblName.setFont(new Font("Dialog", Font.BOLD, 16));
         lblName.setForeground(SystemColor.controlLtHighlight);
-        lblName.setBounds(139, 70, 100, 30);
-        formPanel.add(lblName);
+        lblName.setBounds(139, 195, 100, 30);
+        add(lblName);
 
         txtName = new JTextField();
-        txtName.setBounds(318, 70, 300, 30);
-        formPanel.add(txtName);
+        txtName.setBounds(318, 195, 300, 30);
+        txtName.setEditable(false);
+        add(txtName);
 
         JLabel lblBreed = new JLabel("Breed:");
         lblBreed.setFont(new Font("Dialog", Font.BOLD, 16));
         lblBreed.setForeground(SystemColor.controlLtHighlight);
-        lblBreed.setBounds(139, 120, 100, 30);
-        formPanel.add(lblBreed);
+        lblBreed.setBounds(139, 237, 100, 30);
+        add(lblBreed);
 
         txtBreed = new JTextField();
-        txtBreed.setBounds(318, 120, 300, 30);
-        formPanel.add(txtBreed);
+        txtBreed.setBounds(318, 237, 300, 30);
+        txtBreed.setEditable(false);
+        add(txtBreed);
 
         JLabel lblAge = new JLabel("Age:");
         lblAge.setFont(new Font("Dialog", Font.BOLD, 16));
         lblAge.setForeground(SystemColor.controlLtHighlight);
-        lblAge.setBounds(139, 170, 100, 30);
-        formPanel.add(lblAge);
+        lblAge.setBounds(139, 279, 100, 30);
+        add(lblAge);
 
         txtAge = new JTextField();
-        txtAge.setBounds(318, 170, 300, 30);
-        formPanel.add(txtAge);
+        txtAge.setBounds(318, 279, 300, 30);
+        txtAge.setEditable(false);
+        add(txtAge);
 
         JLabel lblGender = new JLabel("Gender:");
         lblGender.setFont(new Font("Dialog", Font.BOLD, 16));
         lblGender.setForeground(SystemColor.controlLtHighlight);
-        lblGender.setBounds(139, 220, 100, 30);
-        formPanel.add(lblGender);
+        lblGender.setBounds(139, 321, 100, 30);
+        add(lblGender);
 
         txtGender = new JTextField();
-        txtGender.setBounds(318, 220, 300, 30);
-        formPanel.add(txtGender);
+        txtGender.setBounds(318, 321, 300, 30);
+        txtGender.setEditable(false);
+        add(txtGender);
 
         JLabel lblSize = new JLabel("Size:");
         lblSize.setFont(new Font("Dialog", Font.BOLD, 16));
         lblSize.setForeground(SystemColor.controlLtHighlight);
-        lblSize.setBounds(139, 270, 100, 30);
-        formPanel.add(lblSize);
+        lblSize.setBounds(139, 361, 100, 30);
+        add(lblSize);
 
         txtSize = new JTextField();
-        txtSize.setBounds(318, 270, 300, 30);
-        formPanel.add(txtSize);
+        txtSize.setBounds(318, 363, 300, 30);
+        txtSize.setEditable(false);
+        add(txtSize);
 
         JLabel lblCageNumber = new JLabel("Cage Number:");
         lblCageNumber.setFont(new Font("Dialog", Font.BOLD, 16));
         lblCageNumber.setForeground(SystemColor.controlLtHighlight);
-        lblCageNumber.setBounds(139, 320, 150, 30);
-        formPanel.add(lblCageNumber);
+        lblCageNumber.setBounds(139, 403, 173, 30);
+        add(lblCageNumber);
 
         txtCageNumber = new JTextField();
-        txtCageNumber.setBounds(318, 320, 300, 30);
-        formPanel.add(txtCageNumber);
+        txtCageNumber.setBounds(318, 405, 300, 30);
+        txtCageNumber.setEditable(false);
+        add(txtCageNumber);
 
-//        JButton btnUpdate = new JButton("Update");
-//        btnUpdate.setFont(new Font("Dialog", Font.BOLD, 16));
-//        btnUpdate.setBounds(150, 370, 150, 40);
-//        formPanel.add(btnUpdate);
-       
-
-//        JButton btnBack = new JButton("Back");
-//        btnBack.setFont(new Font("Dialog", Font.BOLD, 16));
-//        btnBack.setBounds(472, 370, 150, 40);
-//        btnBack.addActionListener(new ActionListener() {
-//            public void actionPerformed(ActionEvent e) {
-//                cardLayout.show(cardPanel, "MainMenu"); // Correctly reference cardPanel
-//            }
-//        });
-//        formPanel.add(btnBack);
-    }
-
-    private void initializeTable() {
-        // Sample data for the table
-        String[] columnNames = {"Name", "Breed", "Age", "Gender", "Size", "Cage Number"};
-        Object[][] data = {
-            {"Tom", "Siamese", "2", "Male", "Medium", "A1"},
-            {"Whiskers", "Maine Coon", "3", "Female", "Large", "B2"}
-        };
-
-        // Create a table with custom cell renderer
-        DefaultTableModel model = new DefaultTableModel(data, columnNames);
-        table = new JTable(model);
-
-        // Customizing table appearance
-        table.setFont(new Font("Dialog", Font.PLAIN, 14));
-        table.setRowHeight(30);
-
-        // Center align table cell values
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        for (int i = 0; i < table.getColumnCount(); i++) {
-            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-        }
-
-        // Set column widths
-        TableColumn column = null;
-        for (int i = 0; i < table.getColumnCount(); i++) {
-            column = table.getColumnModel().getColumn(i);
-            switch (i) {
-                case 0: // Name
-                case 1: // Breed
-                    column.setPreferredWidth(100);
-                    break;
-                case 2: // Age
-                    column.setPreferredWidth(50);
-                    break;
-                case 3: // Gender
-                    column.setPreferredWidth(70);
-                    break;
-                case 4: // Size
-                    column.setPreferredWidth(70);
-                    break;
-                case 5: // Cage Number
-                    column.setPreferredWidth(100);
-                    break;
+        JButton btnDisplay = new JButton("Display");
+        btnDisplay.setFont(new Font("Dialog", Font.BOLD, 16));
+        btnDisplay.setBounds(150, 500, 150, 40);
+        btnDisplay.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                DisplayCat();
             }
-        }
+        });
+        add(btnDisplay);
 
-        // Use JScrollPane for table with dynamic height
-        tableScrollPane = new JScrollPane(table);
-        tableScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        tableScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        tablePanel.add(tableScrollPane, BorderLayout.CENTER);
-    }
+        JButton btnBack = new JButton("Back");
+        btnBack.setFont(new Font("Dialog", Font.BOLD, 16));
+        btnBack.setBounds(472, 500, 150, 40);
+        btnBack.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cardPanel, "Cat"); // Change "MainMenu" to the actual name of the main panel
+            }
+        });
+        add(btnBack);
 
-    private void showSingleCatRecord() {
-
-        formPanel.setVisible(true);
-        tablePanel.setVisible(false);
-    }
-
-    private void showAllRecords() {
+        JLabel lblCatId = new JLabel("Select Cat:");
+        lblCatId.setForeground(SystemColor.controlLtHighlight);
+        lblCatId.setFont(new Font("Dialog", Font.BOLD, 16));
+        lblCatId.setBounds(139, 152, 100, 30);
+        add(lblCatId);
         
-        formPanel.setVisible(false);
-        tablePanel.setVisible(true);
-
-        // Calculate the height needed for the table based on its content
-        int rowCount = table.getRowCount();
-        int rowHeight = table.getRowHeight();
-        int headerHeight = table.getTableHeader().getPreferredSize().height;
-        int tableHeight = rowCount * rowHeight + headerHeight;
-
-        // Set a minimum height for the panel and add some padding
-        int panelHeight = Math.max(400, tableHeight + 50); // 400 is the minimum height, 50 is extra padding
-
-        // Update the preferred size of the tableScrollPane and tablePanel
-        tableScrollPane.setPreferredSize(new Dimension(800, tableHeight));
-        tablePanel.setPreferredSize(new Dimension(800, panelHeight));
-
-        // Ensure the layout manager updates the panel size
-        tablePanel.revalidate();
-        tablePanel.repaint();
+        populateCatIds();
     }
+    
+    private void populateCatIds() {
+        try {
+            URL url = new URL("http://localhost:8080/animalRescue/cat/getall"); // Endpoint to get cat IDs
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Accept", "application/json");
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                StringBuilder response = new StringBuilder();
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"))) {
+                    String line;
+                    while ((line = in.readLine()) != null) {
+                        response.append(line);
+                    }
+                }
+
+                JSONArray jsonArray = new JSONArray(response.toString());
+                cboOptions.removeAllItems(); // Clear previous items
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    int id = jsonObject.getInt("catId");
+                    String name = jsonObject.optString("name", "N/A");
+                    String breed = jsonObject.optString("breed", "N/A");
+                    cboOptions.addItem(String.format("%d - %s %s", id, name, breed));
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Error: Unable to fetch cat IDs.");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+        }
+    }
+
+    private void fetchCatDetails(String id) {
+        try {
+            URL url = new URL("http://localhost:8080/animalRescue/cat/read/" + id);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Accept", "application/json");
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                StringBuilder response = new StringBuilder();
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"))) {
+                    String line;
+                    while ((line = in.readLine()) != null) {
+                        response.append(line);
+                    }
+                }
+
+                JSONObject jsonObject = new JSONObject(response.toString());
+                
+                txtName.setText(jsonObject.optString("name", ""));
+                txtSize.setText(jsonObject.optString("size", ""));
+                txtAge.setText(String.valueOf(jsonObject.optInt("age", 0))); // Convert integer to string
+                txtGender.setText(jsonObject.optString("gender", ""));
+                txtBreed.setText(jsonObject.optString("breed", ""));
+                txtCageNumber.setText(String.valueOf(jsonObject.optInt("cageNumber", 0))); // Convert integer to string
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Error: Unable to fetch cat details.");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+        }
+    }
+ 
+    private void DisplayCat() {
+        String selectedItem = (String) cboOptions.getSelectedItem();
+        if (selectedItem == null) {
+            JOptionPane.showMessageDialog(null, "Please select a volunteer ID.");
+            return;
+        }
+        
+        String id = selectedItem.split(" - ")[0]; // Extract ID from the selected item
+
+        // Create JSON object with only the ID
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", id); // Include only the ID
+
+        try {
+            URL url = new URL("http://localhost:8080/animalRescue/cat/Display/"+id);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("Display");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+
+            try (java.io.OutputStream os = connection.getOutputStream()) {
+                byte[] input = jsonObject.toString().getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                JOptionPane.showMessageDialog(null, "Cat Displayd successfully.");
+                // Optionally, clear the text fields after deletion
+                txtName.setText("");
+                txtSize.setText("");
+                txtBreed.setText("");
+                txtAge.setText("");
+                txtCageNumber.setText("");
+                txtGender.setText("");
+                // Optionally, re-populate the ComboBox
+                populateCatIds();
+            } else {
+                JOptionPane.showMessageDialog(null, "Error: Unable to Display Cat.");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+        }
+    }
+
 }

@@ -73,7 +73,11 @@ public class MainMenu extends JFrame {
         cardPanel.add(new CreateSale(cardLayout,cardPanel), "CreateSale");
         cardPanel.add(new UpdateSale(cardLayout,cardPanel), "UpdateSale");
         cardPanel.add(new DeleteSale(cardLayout,cardPanel), "DeleteSale");
-        
+        cardPanel.add(new CreateEmployee(cardLayout,cardPanel), "CreateEmployee");
+        cardPanel.add(new UpdateEmployee(cardLayout,cardPanel), "UpdateEmployee");
+        cardPanel.add(new DeleteEmployee(cardLayout,cardPanel), "DeleteEmployee");
+        cardPanel.add(new DisplayEmployee(cardLayout,cardPanel), "DisplayEmployee");
+
         // Add other panels similarly
 
         contentPane.add(cardPanel, BorderLayout.CENTER);
@@ -91,7 +95,7 @@ public class MainMenu extends JFrame {
         mainMenuPanel.add(lblAnimalRescueApplication);
 
         JButton btnEmployee = new JButton("Manage Employees");
-        btnEmployee.setBounds(22, 505, 181, 46);
+        btnEmployee.setBounds(274, 336, 228, 46);
         btnEmployee.addActionListener(e -> cardLayout.show(cardPanel, "Employee"));
         mainMenuPanel.add(btnEmployee);
 
@@ -133,11 +137,6 @@ public class MainMenu extends JFrame {
         JButton btnBack = new JButton("Back");
         btnBack.setBounds(536, 505, 122, 46);
         mainMenuPanel.add(btnBack);
-        
-        JButton btnMedicalRecord = new JButton("Medical Record");
-        btnMedicalRecord.setBounds(274, 336, 228, 46);
-        btnMedicalRecord.addActionListener(e -> cardLayout.show(cardPanel, "MedicalRecord"));
-        mainMenuPanel.add(btnMedicalRecord);
         
        
 

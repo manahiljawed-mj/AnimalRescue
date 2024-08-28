@@ -1,6 +1,8 @@
 package com.animalRescue.AnimalRescue.controller;
 
 import com.animalRescue.AnimalRescue.domain.Applicant;
+import com.animalRescue.AnimalRescue.domain.Cat;
+import com.animalRescue.AnimalRescue.domain.Dog;
 import com.animalRescue.AnimalRescue.service.ApplicantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,20 @@ public class ApplicantController {
     @PostMapping("/create")
     public Applicant createApplicant(@RequestBody Applicant applicant) {
         return applicantService.create(applicant);
+    }
+
+    @PostMapping("/readCatId")
+    public Applicant readApplicantCatId(@RequestBody Cat cat) {
+        return applicantService.readCatId(cat);
+    }
+
+    @PostMapping("/readDogId")
+    public Applicant readApplicantDogId(@RequestBody Dog dog) {
+        return applicantService.readDogId(dog);
+    }
+    @GetMapping("/readStatus/{status}")
+    public Set<Applicant> readApplicantStatus(@PathVariable String status) {
+        return applicantService.readStatus(status);
     }
 
     @GetMapping("/read/{id}")

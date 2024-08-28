@@ -21,18 +21,42 @@ public class Employee extends JPanel {
 
         JButton btnCreateEmployee = new JButton("Add New Employee Record");
         btnCreateEmployee.setBounds(274, 198, 228, 46);
+        btnCreateEmployee.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Switch to the CreatePetOwner panel
+                cardLayout.show(cardPanel, "CreateEmployee");
+            }
+        });
         add(btnCreateEmployee);
 
         JButton btnUpdateEmployee = new JButton("Update Employee Record");
         btnUpdateEmployee.setBounds(274, 256, 228, 46);
+        btnUpdateEmployee.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Switch to the CreatePetOwner panel
+                cardLayout.show(cardPanel, "UpdateEmployee");
+            }
+        });
         add(btnUpdateEmployee);
 
         JButton btnDeleteEmployee = new JButton("Delete Employee Record");
         btnDeleteEmployee.setBounds(274, 316, 228, 46);
+        btnDeleteEmployee.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Switch to the CreatePetOwner panel
+                cardLayout.show(cardPanel, "DeleteEmployee");
+            }
+        });
         add(btnDeleteEmployee);
 
         JButton btnManageEmployee = new JButton("View Employee Record");
         btnManageEmployee.setBounds(274, 376, 228, 46);
+        btnManageEmployee.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Switch to the CreatePetOwner panel
+                cardLayout.show(cardPanel, "DisplayEmployee");
+            }
+        });
         add(btnManageEmployee);
 
         JButton btnBack = new JButton("Back ");
