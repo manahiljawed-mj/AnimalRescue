@@ -27,7 +27,7 @@ public class DogControllerTest {
 
     @BeforeEach
     public void setUp() {
-        roxy = DogFactory.buildDog(3,"Roxy", "Medium", 8, "Female", "Pitbull", 107);
+        roxy = DogFactory.buildDog(2L,"Roxy", "Medium", 8, "Female", "Pitbull", 107);
     }
 
     @Test

@@ -24,6 +24,8 @@ public class Employee extends JPanel {
         btnCreateEmployee.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the CreatePetOwner panel
+            	cardPanel.add(new CreateEmployee(cardLayout,cardPanel), "CreateEmployee");
+               
                 cardLayout.show(cardPanel, "CreateEmployee");
             }
         });
@@ -34,6 +36,8 @@ public class Employee extends JPanel {
         btnUpdateEmployee.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the CreatePetOwner panel
+            	 cardPanel.add(new UpdateEmployee(cardLayout,cardPanel), "UpdateEmployee");
+                 
                 cardLayout.show(cardPanel, "UpdateEmployee");
             }
         });
@@ -44,6 +48,8 @@ public class Employee extends JPanel {
         btnDeleteEmployee.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the CreatePetOwner panel
+            	cardPanel.add(new DeleteEmployee(cardLayout,cardPanel), "DeleteEmployee");
+
                 cardLayout.show(cardPanel, "DeleteEmployee");
             }
         });
@@ -54,6 +60,7 @@ public class Employee extends JPanel {
         btnManageEmployee.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the CreatePetOwner panel
+                cardPanel.add(new DisplayEmployee(cardLayout,cardPanel), "DisplayEmployee");
                 cardLayout.show(cardPanel, "DisplayEmployee");
             }
         });

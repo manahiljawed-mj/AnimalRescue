@@ -1,6 +1,8 @@
 package AnimalRescueFrontend;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,8 +10,13 @@ import java.awt.event.ActionListener;
 public class Cat extends JPanel {
 
     private static final long serialVersionUID = 1L;
+    private JPanel contentPane;
+    private CardLayout cardLayout;
+    private JPanel cardPanel;
 
     public Cat(CardLayout cardLayout, JPanel cardPanel) {
+
+         
         setLayout(null);
         setBackground(new Color(0, 128, 128));
 
@@ -24,7 +31,9 @@ public class Cat extends JPanel {
         btnCreateCat.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the CreateCat panel
+            	cardPanel.add(new CreateCat(cardLayout,cardPanel), "CreateCat");
                 cardLayout.show(cardPanel, "CreateCat");
+                
             }
         });
         add(btnCreateCat);
@@ -33,8 +42,8 @@ public class Cat extends JPanel {
         btnUpdateCat.setBounds(274, 256, 228, 46);
         btnUpdateCat.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // Switch to the CreateCat panel
-                cardLayout.show(cardPanel, "UpdateCat");
+            	cardPanel.add(new UpdateCat(cardLayout,cardPanel), "UpdateCat");
+                cardLayout.show(cardPanel, "UpdateCat");   
             }
         });
         add(btnUpdateCat);
@@ -44,6 +53,7 @@ public class Cat extends JPanel {
         btnDeleteCat.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the CreateCat panel
+            	 cardPanel.add(new DeleteCat(cardLayout,cardPanel), "DeleteCat");
                 cardLayout.show(cardPanel, "DeleteCat");
             }
         });
@@ -54,6 +64,7 @@ public class Cat extends JPanel {
         btnManageCat.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the CreateCat panel
+            	cardPanel.add(new DisplayCat(cardLayout,cardPanel), "DisplayCat");
                 cardLayout.show(cardPanel, "DisplayCat");
             }
         });

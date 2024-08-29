@@ -22,7 +22,7 @@ public class CatServiceTest {
     @BeforeEach
     public void setUp() {
         whiskers = new Cat.Builder()
-                .setCatId(7L)
+                .setCatId(1L)
                 .setName("Whiskers")
                 .setAge(3)
                 .setBreed("Siamese")
@@ -39,8 +39,8 @@ public class CatServiceTest {
     @Order(1)
     void testCreate() {
         Cat newCat = new Cat.Builder()
-                .setCatId(2L)
-                .setName("Luna")
+                .setCatId(1L)
+                .setName("Luna New")
                 .setAge(2)
                 .setBreed("Persian")
                 .setSize("Medium")

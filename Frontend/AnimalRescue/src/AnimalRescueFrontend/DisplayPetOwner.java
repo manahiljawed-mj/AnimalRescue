@@ -170,15 +170,15 @@ public class DisplayPetOwner extends JPanel {
         add(cboDog);
 
         // Buttons
-        JButton btnAdd = new JButton("Display");
-        btnAdd.setFont(new Font("Dialog", Font.BOLD, 16));
-        btnAdd.setBounds(150, 500, 150, 40);
-        btnAdd.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                displayPetOwner();
-            }
-        });
-        add(btnAdd);
+//        JButton btnAdd = new JButton("Display");
+//        btnAdd.setFont(new Font("Dialog", Font.BOLD, 16));
+//        btnAdd.setBounds(150, 500, 150, 40);
+//        btnAdd.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                displayPetOwner();
+//            }
+//        });
+//        add(btnAdd);
 
         JButton btnBack = new JButton("Back");
         btnBack.setFont(new Font("Dialog", Font.BOLD, 16));

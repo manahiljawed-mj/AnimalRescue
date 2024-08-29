@@ -2,9 +2,7 @@ package AnimalRescueFrontend;
 
 import javax.swing.*;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
+import org.json.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,6 +13,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import AnimalRescueFrontend.CatClass;
 
 public class CreateApplicant extends JPanel {
 
@@ -260,7 +260,7 @@ public class CreateApplicant extends JPanel {
                                   System.out.println("Object: " + or);
                                   sendRequest(url1, or);
                                   JOptionPane.showMessageDialog(null, "Applicant created successfully!");
-                            JOptionPane.showMessageDialog(null, "Empty response received from the server.");
+//                            JOptionPane.showMessageDialog(null, "Empty response received from the server.");
                         }
                     } 
                     else {

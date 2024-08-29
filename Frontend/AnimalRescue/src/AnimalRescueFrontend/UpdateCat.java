@@ -22,6 +22,9 @@ public class UpdateCat extends JPanel {
     private JTextField txtCageNumber;
     private JComboBox<String> cboOptions;
 
+    public UpdateCat() {
+    	
+    }
     public UpdateCat(CardLayout cardLayout, JPanel cardPanel) {
         setLayout(null);
         setBackground(new Color(0, 128, 128));
@@ -112,6 +115,7 @@ public class UpdateCat extends JPanel {
         btnUpdate.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 updateCat();
+                cardLayout.show(cardPanel, "Cat");
             }
         });
         add(btnUpdate);
@@ -134,8 +138,8 @@ public class UpdateCat extends JPanel {
         
         populateCatIds();
     }
-    
-    private void populateCatIds() {
+
+    void populateCatIds() {
         try {
             URL url = new URL("http://localhost:8080/animalRescue/cat/getall"); // Endpoint to get cat IDs
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -238,6 +242,7 @@ public class UpdateCat extends JPanel {
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 JOptionPane.showMessageDialog(null, "Cat updated successfully.");
+               
             } else {
                 JOptionPane.showMessageDialog(null, "Error: Unable to update cat.");
             }

@@ -24,6 +24,9 @@ public class Volunteer extends JPanel {
         btnCreateVolunteer.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the CreateVolunteer panel
+            	
+                cardPanel.add(new CreateVolunteer(cardLayout,cardPanel), "CreateVolunteer");
+
                 cardLayout.show(cardPanel, "CreateVolunteer");
             }
         });
@@ -34,6 +37,8 @@ public class Volunteer extends JPanel {
         btnUpdateVolunteer.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the CreateVolunteer panel
+                cardPanel.add(new UpdateVolunteer(cardLayout,cardPanel), "UpdateVolunteer");
+              
                 cardLayout.show(cardPanel, "UpdateVolunteer");
             }
         });
@@ -44,6 +49,7 @@ public class Volunteer extends JPanel {
         btnDeleteVolunteer.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the CreateVolunteer panel
+           	  cardPanel.add(new DeleteVolunteer(cardLayout,cardPanel), "DeleteVolunteer");
                 cardLayout.show(cardPanel, "DeleteVolunteer");
             }
         });
@@ -54,6 +60,8 @@ public class Volunteer extends JPanel {
         btnManageVolunteer.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the CreateVolunteer panel
+            	cardPanel.add(new DisplayVolunteer(cardLayout,cardPanel), "DisplayVolunteer");
+           
                 cardLayout.show(cardPanel, "DisplayVolunteer");
             }
         });

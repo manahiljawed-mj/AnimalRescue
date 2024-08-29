@@ -25,6 +25,7 @@ public class ApplicantServiceTest {
 
     @BeforeEach
     public void setUp() {
+        //make sure that petOwner with provided id is there in database
         PetOwner petOwner = new PetOwner.Builder()
                 .setId(1L)
                 .setFirstName("John")
@@ -35,7 +36,7 @@ public class ApplicantServiceTest {
                 .build();
 
         Dog dog = new Dog.Builder()
-                .setDogId(8L)
+                .setDogId(1L)
                 .setName("Buddy")
                 .setSize("Large")
                 .setAge(5)
@@ -45,7 +46,7 @@ public class ApplicantServiceTest {
                 .build();
 
         Cat cat = new Cat.Builder()
-                .setCatId(4L)
+                .setCatId(1L)
                 .setName("Whiskers")
                 .setSize("Large")
                 .setAge(3)
@@ -55,7 +56,7 @@ public class ApplicantServiceTest {
                 .build();
 
 
-        applicant = ApplicantFactory.buildApplicant(15L,petOwner, LocalDate.now(), dog, cat, "Pending");
+        applicant = ApplicantFactory.buildApplicant(1L,petOwner, LocalDate.now(), dog, cat, "Pending");
     }
 
     @Test

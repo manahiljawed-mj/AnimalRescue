@@ -24,12 +24,7 @@ public class CreatePetOwner extends JPanel {
     private JTextField txtContactNo;
     private JTextField txtEmailAddress;
     private JTextField txtStreetAddress;
-    private JRadioButton rdbtnCat;
-    private JRadioButton rdbtnDog;
-    private JComboBox<String> cboCat;
-    private JComboBox<String> cboDog;
     private JTextField txtCurrentDate;
-    private JTextField txtReturnDate;
     String petName;
     String petsize;
     String petAge;
@@ -91,7 +86,7 @@ public class CreatePetOwner extends JPanel {
         JLabel lblStreetAddress = new JLabel("Street Address:");
         lblStreetAddress.setFont(new Font("Dialog", Font.BOLD, 16));
         lblStreetAddress.setForeground(SystemColor.controlLtHighlight);
-        lblStreetAddress.setBounds(150, 321, 136, 30);
+        lblStreetAddress.setBounds(150, 321, 150, 30);
         add(lblStreetAddress);
 
         txtStreetAddress = new JTextField();
@@ -101,7 +96,7 @@ public class CreatePetOwner extends JPanel {
         JLabel lblCurrentDate = new JLabel("Current Date:");
         lblCurrentDate.setFont(new Font("Dialog", Font.BOLD, 16));
         lblCurrentDate.setForeground(SystemColor.controlLtHighlight);
-        lblCurrentDate.setBounds(150, 363, 119, 30);
+        lblCurrentDate.setBounds(150, 363, 150, 30);
         add(lblCurrentDate);
 
         txtCurrentDate = new JTextField();
@@ -110,62 +105,12 @@ public class CreatePetOwner extends JPanel {
         txtCurrentDate.setEditable(false);
         add(txtCurrentDate);
 
-        JLabel lblReturnDate = new JLabel("Return Date:");
-        lblReturnDate.setFont(new Font("Dialog", Font.BOLD, 16));
-        lblReturnDate.setForeground(SystemColor.controlLtHighlight);
-        lblReturnDate.setBounds(150, 405, 119, 30);
-        add(lblReturnDate);
-
-        txtReturnDate = new JTextField();
-        txtReturnDate.setBounds(318, 405, 300, 30);
-        add(txtReturnDate);
-
-        // Radio Buttons for Cat and Dog
-        rdbtnCat = new JRadioButton("Cat");
-        rdbtnCat.setFont(new Font("Dialog", Font.BOLD, 16));
-        rdbtnCat.setForeground(SystemColor.controlLtHighlight);
-        rdbtnCat.setBackground(new Color(0, 128, 128));
-        rdbtnCat.setBounds(150, 445, 100, 30);
-        rdbtnCat.setSelected(true); // Default selection
-        rdbtnCat.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                togglePetSelection(true);
-            }
-        });
-        add(rdbtnCat);
-
-        rdbtnDog = new JRadioButton("Dog");
-        rdbtnDog.setFont(new Font("Dialog", Font.BOLD, 16));
-        rdbtnDog.setForeground(SystemColor.controlLtHighlight);
-        rdbtnDog.setBackground(new Color(0, 128, 128));
-        rdbtnDog.setBounds(250, 445, 100, 30);
-        rdbtnDog.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                togglePetSelection(false);
-            }
-        });
-        add(rdbtnDog);
-
         ButtonGroup petGroup = new ButtonGroup();
-        petGroup.add(rdbtnCat);
-        petGroup.add(rdbtnDog);
-
-        // Dropdown for Cat
-        cboCat = new JComboBox<>();
-        cboCat.setBounds(318, 485, 300, 30);
-        cboCat.setEnabled(true);
-        add(cboCat);
-
-        // Dropdown for Dog
-        cboDog = new JComboBox<>();
-        cboDog.setBounds(318, 525, 300, 30);
-        cboDog.setEnabled(false);
-        add(cboDog);
 
         // Buttons
         JButton btnAdd = new JButton("Add");
         btnAdd.setFont(new Font("Dialog", Font.BOLD, 16));
-        btnAdd.setBounds(150, 580, 150, 40);
+        btnAdd.setBounds(162, 432, 150, 40);
         btnAdd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -178,21 +123,14 @@ public class CreatePetOwner extends JPanel {
                     
                     // Gather pet details based on the selected pet type
                     String selectedPetId = "";
-                    String selectedPetType = rdbtnCat.isSelected() ? "cat" : "dog";
-                    if (selectedPetType.equals("cat")) {
-                        selectedPetId = (String) cboCat.getSelectedItem();
-                    } else {
-                        selectedPetId = (String) cboDog.getSelectedItem();
-                    }
+                    
                     String petId = selectedPetId.split(" - ")[0];  // Extract just the ID
                     
-                    // Gather return date
-                    String returnDate = txtReturnDate.getText();
 
                     // Construct JSON payload for pet owner creation
                     String petOwnerJson = String.format(
-                        "{\"firstName\":\"%s\",\"lastName\":\"%s\",\"contactNo\":\"%s\",\"emailAddress\":\"%s\",\"streetAddress\":\"%s\",\"id\":\"%s\",\"petType\":\"%s\",\"takenDate\":\"%s\",\"returnDate\":\"%s\"}",
-                        firstName, lastName, contactNo, emailAddress, streetAddress, petId, selectedPetType, txtCurrentDate.getText(), returnDate
+                        "{\"firstName\":\"%s\",\"lastName\":\"%s\",\"contactNo\":\"%s\",\"emailAddress\":\"%s\",\"streetAddress\":\"%s\"}",
+                        firstName, lastName, contactNo, emailAddress, streetAddress
                     );
 
                     // Send request to create pet owner and get response
@@ -210,59 +148,7 @@ public class CreatePetOwner extends JPanel {
                         String petOwnerStreetAddress=responseObject.optString("streetAddress");
                       
                   
-                       
-                        if (selectedPetType.equals("cat")) {
-                        	
-                        	 System.out.println(petFinalId+""+petName+""+petBreed+""+petCageNo+""+petGender+""+petsize+""+petAge);
-                        	 CatClass cat=new CatClass(petFinalId, petName, petBreed,petCageNo, petGender, petsize, petAge);
-                               System.out.print("Cat Breed"+cat.getBreed());
-                            PetOwnerClass pet=new PetOwnerClass(createdPetId,petOwnerFirstName , petOwnerLasttName, petOwnerContactNo, petOwnerEmailAddress, petOwnerStreetAddress);
-                                System.out.println("pet owner"+pet.getEmailAddress());
-                                               
-                                OwnerRecordClass or=new OwnerRecordClass(null,cat,pet,txtCurrentDate.getText(),txtReturnDate.getText());
-                                // Send request to create owner record
-                                System.out.println("Object"+or.getCat().getId());
-                                System.out.println("Object"+or.getPetOwner().getContactNo());
-                                System.out.println("Object"+or.getTakenDate());
-                                System.out.println("Or Object"+or);
-                                
-                                String url = "http://localhost:8080/animalRescue/ownerRecord/create";
-                                System.out.println("Object: " + or);
-                                sendRequest(url, or);
-
-                                // Show success message
-                                JOptionPane.showMessageDialog(null, "Pet Owner record created successfully!");
-//                                sendRequest("http://localhost:8080/animalRescue/ownerRecord/create", or);
-//
-//                                JOptionPane.showMessageDialog(null, "Pet Owner record created successfully!");
-                            
-                        } else {
-                        	
-                        	
-                        	System.out.println(petFinalId+""+petName+""+petBreed+""+petCageNo+""+petGender+""+petsize+""+petAge);
-                       	 DogClass dog=new DogClass(petFinalId, petName, petBreed,petCageNo, petGender, petsize, petAge);
-                              System.out.print("Cat Breed"+dog.getBreed());
-                           PetOwnerClass pet=new PetOwnerClass(createdPetId,petOwnerFirstName , petOwnerLasttName, petOwnerContactNo, petOwnerEmailAddress, petOwnerStreetAddress);
-                               System.out.println("pet owner"+pet.getEmailAddress());
-                                              
-                               OwnerRecordClass or=new OwnerRecordClass(dog,null,pet,txtCurrentDate.getText(),txtReturnDate.getText());
-                               
-                               System.out.println("Object: " + or);
-                               String url = "http://localhost:8080/animalRescue/ownerRecord/create";
-                               sendRequest(url, or);
-
-                               // Show success message
-                               JOptionPane.showMessageDialog(null, "Pet Owner record created successfully!");
-                               // Send request to create owner record
-                               System.out.println("Object"+or.getCat());
-                               System.out.println("Object"+or.getPetOwner());
-                               System.out.println("Object"+or.toString());
-//                               sendRequest("http://localhost:8080/animalRescue/ownerRecord/create", or);
-//
-//                               JOptionPane.showMessageDialog(null, "Pet Owner record created successfully!");
-                          
-                        }
-                       
+                        JOptionPane.showMessageDialog(null, "Created Pet Owner record.");
                         
                       
                         // Optionally clear form fields or update UI
@@ -277,12 +163,12 @@ public class CreatePetOwner extends JPanel {
         });
         add(btnAdd);
 
-        JButton btnCancel = new JButton("Cancel");
+        JButton btnCancel = new JButton("Back");
         btnCancel.setFont(new Font("Dialog", Font.BOLD, 16));
-        btnCancel.setBounds(350, 580, 150, 40);
+        btnCancel.setBounds(464, 432, 150, 40);
         btnCancel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cardPanel, "PreviousPanelName"); // Change to appropriate panel name
+                cardLayout.show(cardPanel, "Cat"); // Change to appropriate panel name
             }
         });
         add(btnCancel);
@@ -291,8 +177,6 @@ public class CreatePetOwner extends JPanel {
     }
 
     private void togglePetSelection(boolean isCat) {
-        cboCat.setEnabled(isCat);
-        cboDog.setEnabled(!isCat);
         if (isCat) {
             fetchCatData();
         } else {
@@ -318,7 +202,7 @@ public class CreatePetOwner extends JPanel {
                 }
 
                 JSONArray jsonArray = new JSONArray(response.toString());
-                cboCat.removeAllItems(); // Clear previous items
+              
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                     int id = jsonObject.getInt("catId");
@@ -331,7 +215,7 @@ public class CreatePetOwner extends JPanel {
                     petsize=jsonObject.optString("size", "N/A");
                     petAge=jsonObject.optString("age", "N/A");
                     petFinalId=String.valueOf(jsonObject.opt("catId"));
-                    cboCat.addItem(String.format("%d - %s %s", id, name, breed));
+                    
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "Error: Unable to fetch cat IDs.");
@@ -360,7 +244,7 @@ public class CreatePetOwner extends JPanel {
                 }
 
                 JSONArray jsonArray = new JSONArray(response.toString());
-                cboDog.removeAllItems(); // Clear previous items
+              
                 for (int i = 0; i < jsonArray.length(); i++) {
                   
                    
@@ -376,7 +260,7 @@ public class CreatePetOwner extends JPanel {
                     petsize=jsonObject.optString("size", "N/A");
                     petAge=jsonObject.optString("age", "N/A");
                     petFinalId=String.valueOf(jsonObject.opt("dogId"));
-                    cboDog.addItem(String.format("%d - %s %s", id, name, breed));
+                    
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "Error: Unable to fetch dog IDs.");

@@ -21,6 +21,7 @@ public class CreateCat extends JPanel {
     private JTextField txtSize;
     private JTextField txtCageNumber;
 
+  
     public CreateCat(CardLayout cardLayout, JPanel cardPanel) {
         setLayout(null);
         setBackground(new Color(0, 128, 128));

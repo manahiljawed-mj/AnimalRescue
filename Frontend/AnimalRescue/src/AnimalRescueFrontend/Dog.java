@@ -24,6 +24,7 @@ public class Dog extends JPanel {
         btnCreateDog.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the CreateDog panel
+            	  cardPanel.add(new CreateDog(cardLayout,cardPanel), "CreateDog");
                 cardLayout.show(cardPanel, "CreateDog");
             }
         });
@@ -34,6 +35,8 @@ public class Dog extends JPanel {
         btnUpdateDog.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the CreateDog panel
+                cardPanel.add(new UpdateDog(cardLayout,cardPanel), "UpdateDog");
+
                 cardLayout.show(cardPanel, "UpdateDog");
             }
         });
@@ -44,6 +47,8 @@ public class Dog extends JPanel {
         btnDeleteDog.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the CreateDog panel
+                cardPanel.add(new DeleteDog(cardLayout,cardPanel), "DeleteDog");
+
                 cardLayout.show(cardPanel, "DeleteDog");
             }
         });
@@ -54,6 +59,7 @@ public class Dog extends JPanel {
         btnManageDog.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the CreateDog panel
+                cardPanel.add(new DisplayDog(cardLayout,cardPanel), "DisplayDog");
                 cardLayout.show(cardPanel, "DisplayDog");
             }
         });

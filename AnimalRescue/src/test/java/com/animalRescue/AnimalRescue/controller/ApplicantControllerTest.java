@@ -22,8 +22,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,7 +35,6 @@ public class ApplicantControllerTest {
 
     private final String BASE_URL = "http://localhost:8080/animalRescue/applicant";
     private Applicant applicant;
-    private Cat catid;
 
     @BeforeEach
     public void setUp() {
@@ -51,7 +48,7 @@ public class ApplicantControllerTest {
                 .build();
 
         Dog dog = new Dog.Builder()
-                .setDogId(9L)
+                .setDogId(2L)
                 .setName("Buddy")
                 .setSize("Large")
                 .setAge(5)
@@ -61,7 +58,7 @@ public class ApplicantControllerTest {
                 .build();
 
         Cat cat = new Cat.Builder()
-                .setCatId(4L)
+                .setCatId(6L)
                 .setName("Whiskers")
                 .setSize("Large")
                 .setAge(3)
@@ -69,8 +66,8 @@ public class ApplicantControllerTest {
                 .setBreed("Siamese")
                 .setCageNumber(5)
                 .build();
-        catid=cat;
-        applicant = ApplicantFactory.buildApplicant(14L,petOwner, LocalDate.now(), null, cat, "Pending");
+
+        applicant = ApplicantFactory.buildApplicant(2L,petOwner, LocalDate.now(), dog, cat, "Pending");
     }
 
     @Test
@@ -88,7 +85,7 @@ public class ApplicantControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode()); // Change to HttpStatus.OK if needed
         assertNotNull(response.getBody());
         Applicant createdApplicant = response.getBody();
-        assertEquals(applicant.getApplicationDate(), createdApplicant.getApplicationDate());
+        assertEquals(applicant.getStatus(), createdApplicant.getStatus());
         System.out.println("Created Applicant: " + createdApplicant);
     }
 

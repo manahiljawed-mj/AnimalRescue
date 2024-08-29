@@ -138,13 +138,16 @@ public class CreateDog extends JPanel {
                         String id = jsonResponse.optString("dogId", "No ID returned");
 
                         JOptionPane.showMessageDialog(null, "Dog created successfully!\nDog ID: " + id);
+                        cardLayout.show(cardPanel, "Dog");
                     } else {
                         JOptionPane.showMessageDialog(null, "Error: Unable to create Dog.");
+                        cardLayout.show(cardPanel, "Dog");
                     }
 
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+                    cardLayout.show(cardPanel, "Dog");
                 }
             }
         });

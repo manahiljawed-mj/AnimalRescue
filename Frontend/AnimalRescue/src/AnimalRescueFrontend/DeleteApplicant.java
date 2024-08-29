@@ -293,7 +293,7 @@ public class DeleteApplicant extends JPanel {
     
 private void fetchApplicantData() {
     try {
-        URL url = new URL("http://localhost:8080/animalRescue/applicant/getall"); // Endpoint to get applicant data
+        URL url = new URL("http://localhost:8080/animalRescue/applicant/readStatus/Pending"); // Endpoint to get applicant data
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         connection.setRequestProperty("Accept", "application/json");
@@ -391,7 +391,7 @@ private void fetchApplicantDetails(String id) {
             JSONObject jsonObject = new JSONObject(response.toString()); // Parse as JSONObject
             
 //            // Clear previous items
-//            cboApplicantID.removeAllItems();
+            cboApplicantID.removeAllItems();
             cboCat.removeAllItems();
             cboDog.removeAllItems();
             cboPetOwner.removeAllItems();

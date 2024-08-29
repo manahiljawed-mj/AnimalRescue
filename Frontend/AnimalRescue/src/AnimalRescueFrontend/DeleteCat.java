@@ -118,6 +118,7 @@ public class DeleteCat extends JPanel {
         btnDelete.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 DeleteCat();
+                cardLayout.show(cardPanel, "Cat");
             }
         });
         add(btnDelete);
@@ -249,7 +250,7 @@ public class DeleteCat extends JPanel {
                 // Optionally, re-populate the ComboBox
                 populateCatIds();
             } else {
-                JOptionPane.showMessageDialog(null, "Error: Unable to Delete Cat.");
+                JOptionPane.showMessageDialog(null, "Error: Unable to Delete Cat.\nPlease Check Applicant or PetOwner");
             }
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -112,6 +112,7 @@ public class UpdateDog extends JPanel {
         btnUpdate.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 updateDog();
+                cardLayout.show(cardPanel, "Dog");
             }
         });
         add(btnUpdate);
@@ -238,6 +239,7 @@ public class UpdateDog extends JPanel {
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 JOptionPane.showMessageDialog(null, "Dog updated successfully.");
+                
             } else {
                 JOptionPane.showMessageDialog(null, "Error: Unable to update Dog.");
             }

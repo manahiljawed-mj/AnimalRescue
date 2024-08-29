@@ -24,36 +24,43 @@ public class Sale extends JPanel {
         btnCreateSale.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the CreateSale panel
+            	 cardPanel.add(new DisplaySale(cardLayout,cardPanel), "DisplaySale");
+            
                 cardLayout.show(cardPanel, "CreateSale");
             }
         });
         add(btnCreateSale);
 
-        JButton btnUpdateSale = new JButton("Update Sale Record");
+        JButton btnUpdateSale = new JButton("View Owner Record");
         btnUpdateSale.setBounds(274, 256, 228, 46);
         btnUpdateSale.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the CreateSale panel
-                cardLayout.show(cardPanel, "UpdateSale");
+//                cardPanel.add(new CreateSale(cardLayout,cardPanel), "CreateSale");
+//                cardPanel.add(new UpdateSale(cardLayout,cardPanel), "UpdateSale");
+//                cardPanel.add(new DeleteSale(cardLayout,cardPanel), "DeleteSale");
+                cardPanel.add(new DisplayOwnerRecord(cardLayout,cardPanel), "DisplayOwnerRecord");
+                cardLayout.show(cardPanel, "DisplayOwnerRecord");
             }
         });
         add(btnUpdateSale);
 
-        JButton btnDeleteSale = new JButton("Delete Sale Record");
-        btnDeleteSale.setBounds(274, 316, 228, 46);
-        btnDeleteSale.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Switch to the CreateSale panel
-                cardLayout.show(cardPanel, "DeleteSale");
-            }
-        });
-        add(btnDeleteSale);
+//        JButton btnDeleteSale = new JButton("Delete Sale Record");
+//        btnDeleteSale.setBounds(274, 316, 228, 46);
+//        btnDeleteSale.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                // Switch to the CreateSale panel
+//                cardLayout.show(cardPanel, "DeleteSale");
+//            }
+//        });
+//        add(btnDeleteSale);
 
         JButton btnManageSale = new JButton("View Sale Record");
-        btnManageSale.setBounds(274, 376, 228, 46);
+        btnManageSale.setBounds(274, 316, 228, 46);
         btnManageSale.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Switch to the CreateSale panel
+            	cardPanel.add(new DisplaySale(cardLayout,cardPanel), "DisplaySale");
                 cardLayout.show(cardPanel, "DisplaySale");
             }
         });

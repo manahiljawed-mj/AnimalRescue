@@ -1,6 +1,9 @@
 package AnimalRescueFrontend;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -45,39 +48,16 @@ public class MainMenu extends JFrame {
         cardPanel.add(new Applicant(cardLayout, cardPanel), "Applicant");
         cardPanel.add(new MedicalRecord(cardLayout, cardPanel), "MedicalRecord");
         cardPanel.add(new PetOwner(cardLayout, cardPanel), "PetOwner");
-        cardPanel.add(new CreateCat(cardLayout,cardPanel), "CreateCat");
-        cardPanel.add(new UpdateCat(cardLayout,cardPanel), "UpdateCat");
-        cardPanel.add(new DeleteCat(cardLayout,cardPanel), "DeleteCat");
-        cardPanel.add(new DisplayCat(cardLayout,cardPanel), "DisplayCat");
-        cardPanel.add(new CreateDog(cardLayout,cardPanel), "CreateDog");
-        cardPanel.add(new UpdateDog(cardLayout,cardPanel), "UpdateDog");
-        cardPanel.add(new DeleteDog(cardLayout,cardPanel), "DeleteDog");
-        cardPanel.add(new DisplayDog(cardLayout,cardPanel), "DisplayDog");
-        cardPanel.add(new CreateApplicant(cardLayout,cardPanel), "CreateApplicant");
-        cardPanel.add(new UpdateApplicant(cardLayout,cardPanel), "UpdateApplicant");
-        cardPanel.add(new DeleteApplicant(cardLayout,cardPanel), "DeleteApplicant");
-        cardPanel.add(new DisplayApplicant(cardLayout,cardPanel), "DisplayApplicant");
-        cardPanel.add(new CreatePetOwner(cardLayout,cardPanel), "CreatePetOwner");
-        cardPanel.add(new UpdatePetOwner(cardLayout,cardPanel), "UpdatePetOwner");
-        cardPanel.add(new DeletePetOwner(cardLayout,cardPanel), "DeletePetOwner");
-        cardPanel.add(new DisplayPetOwner(cardLayout,cardPanel), "DisplayPetOwner");
-        cardPanel.add(new CreateMedicalRecord(cardLayout,cardPanel), "CreateMedicalRecord");
-        cardPanel.add(new UpdateMedicalRecord(cardLayout,cardPanel), "UpdateMedicalRecord");
-        cardPanel.add(new DeleteMedicalRecord(cardLayout,cardPanel), "DeleteMedicalRecord");
-        cardPanel.add(new DisplayMedicalRecord(cardLayout,cardPanel), "DisplayMedicalRecord");
-        cardPanel.add(new DisplayVolunteer(cardLayout,cardPanel), "DisplayVolunteer");
-        cardPanel.add(new CreateVolunteer(cardLayout,cardPanel), "CreateVolunteer");
-        cardPanel.add(new UpdateVolunteer(cardLayout,cardPanel), "UpdateVolunteer");
-        cardPanel.add(new DeleteVolunteer(cardLayout,cardPanel), "DeleteVolunteer");
-        cardPanel.add(new DisplaySale(cardLayout,cardPanel), "DisplaySale");
-        cardPanel.add(new CreateSale(cardLayout,cardPanel), "CreateSale");
-        cardPanel.add(new UpdateSale(cardLayout,cardPanel), "UpdateSale");
-        cardPanel.add(new DeleteSale(cardLayout,cardPanel), "DeleteSale");
-        cardPanel.add(new CreateEmployee(cardLayout,cardPanel), "CreateEmployee");
-        cardPanel.add(new UpdateEmployee(cardLayout,cardPanel), "UpdateEmployee");
-        cardPanel.add(new DeleteEmployee(cardLayout,cardPanel), "DeleteEmployee");
-        cardPanel.add(new DisplayEmployee(cardLayout,cardPanel), "DisplayEmployee");
-
+        
+    
+//        cardPanel.add(new CreateMedicalRecord(cardLayout,cardPanel), "CreateMedicalRecord");
+//        cardPanel.add(new UpdateMedicalRecord(cardLayout,cardPanel), "UpdateMedicalRecord");
+//        cardPanel.add(new DeleteMedicalRecord(cardLayout,cardPanel), "DeleteMedicalRecord");
+//        cardPanel.add(new DisplayMedicalRecord(cardLayout,cardPanel), "DisplayMedicalRecord");
+        
+       
+        
+        
         // Add other panels similarly
 
         contentPane.add(cardPanel, BorderLayout.CENTER);
@@ -132,12 +112,23 @@ public class MainMenu extends JFrame {
 
         JButton btnSignOff = new JButton("Sign Off");
         btnSignOff.setBounds(666, 505, 122, 46);
+        btnSignOff.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	
+               
+               JOptionPane.showMessageDialog(null, "Signed Off");// Change to appropriate panel name
+               LoginScreen login=new LoginScreen();
+               login.setVisible(true);
+               dispose();
+            }
+        });
+        
         mainMenuPanel.add(btnSignOff);
 
-        JButton btnBack = new JButton("Back");
-        btnBack.setBounds(536, 505, 122, 46);
-        mainMenuPanel.add(btnBack);
-        
+//        JButton btnBack = new JButton("Back");
+//        btnBack.setBounds(536, 505, 122, 46);
+//        mainMenuPanel.add(btnBack);
+//        
        
 
         return mainMenuPanel;

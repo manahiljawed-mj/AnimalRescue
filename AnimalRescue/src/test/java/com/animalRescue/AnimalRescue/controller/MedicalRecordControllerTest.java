@@ -31,7 +31,7 @@ public class MedicalRecordControllerTest {
     public void setUp() {
 
         Dog dog = new Dog.Builder()
-                .setDogId(9L)
+                .setDogId(1L)
                 .setName("Buddy")
                 .setSize("Large")
                 .setAge(5)
@@ -41,7 +41,7 @@ public class MedicalRecordControllerTest {
                 .build();
 
         Cat cat = new Cat.Builder()
-                .setCatId(4L)
+                .setCatId(5L)
                 .setName("Whiskers")
                 .setSize("Large")
                 .setAge(3)
@@ -50,7 +50,7 @@ public class MedicalRecordControllerTest {
                 .setCageNumber(5)
                 .build();
 
-        medicalRecord =MedicalRecordFactory.buildMedicalRecord(1L,dog,cat,LocalDate.now(),"Med1","Good",LocalDate.now().plusMonths(6),"Annual checkup");
+        medicalRecord =MedicalRecordFactory.buildMedicalRecord(4L,dog,cat,LocalDate.now(),"Med1","Good",LocalDate.now().plusMonths(6),"Annual checkup");
     }
 
     @Test

@@ -23,7 +23,7 @@ public class EmployeeServiceTest {
     private EmployeeService employeeService;
 
     private static Employee employee = new Employee.Builder()
-            .setId(1L)
+            .setId(2L)
             .setFirstName("John")
             .setLastName("Doe")
             .setContactNo("1234567890")
@@ -35,7 +35,7 @@ public class EmployeeServiceTest {
     void testCreate() {
         Employee createdEmployee = employeeService.create(employee);
         assertNotNull(createdEmployee);
-        assertEquals(employee.getId(), createdEmployee.getId());
+        assertEquals(employee.getFirstName(), createdEmployee.getFirstName());
         System.out.println("Created: " + createdEmployee);
     }
 

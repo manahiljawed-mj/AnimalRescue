@@ -1,174 +1,119 @@
 package AnimalRescueFrontend;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class DisplaySale extends JPanel {
 
-    private static final long serialVersionUID = 1L;
-    private JComboBox<String> cboSaleId;
-    private JComboBox<String> cboEmployee;
-    private JComboBox<String> cboPetOwner;
-    private JComboBox<String> cboCat;
-    private JComboBox<String> cboDog;
-    private JRadioButton rdbtnCat;
-    private JRadioButton rdbtnDog;
-    private JLabel lblSaleDate;
-    private JTextField txtPrice;
-    private ButtonGroup petTypeGroup;
+    private JTable table;
+    private DefaultTableModel tableModel;
 
+    // Constructor that accepts CardLayout and JPanel
     public DisplaySale(CardLayout cardLayout, JPanel cardPanel) {
+    	setBackground(new Color(0, 128, 128));
+
+        // Initialize table model with column names
+        tableModel = new DefaultTableModel(
+            new String[]{"Sale ID", "Applicant Name", "Employee Name", "Sale Date", "Amount"}, 0
+        );
         setLayout(null);
-        setBackground(new Color(0, 128, 128));
-
-        // Title Label
-        JLabel lblTitle = new JLabel("Display Sale Record");
-        lblTitle.setFont(new Font("Dialog", Font.BOLD, 24));
-        lblTitle.setForeground(SystemColor.controlLtHighlight);
-        lblTitle.setBounds(209, 50, 427, 40);
-        add(lblTitle);
-
-        // Sale ID Dropdown
-        JLabel lblSaleId = new JLabel("Sale ID:");
-        lblSaleId.setFont(new Font("Dialog", Font.BOLD, 16));
-        lblSaleId.setForeground(SystemColor.controlLtHighlight);
-        lblSaleId.setBounds(150, 110, 135, 30);
-        add(lblSaleId);
-
-        String[] saleIds = {"Sale 1", "Sale 2", "Sale 3"}; // Example data
-        cboSaleId = new JComboBox<>(saleIds);
-        cboSaleId.setBounds(318, 110, 300, 30);
-        add(cboSaleId);
-
-        // Employee Dropdown
-        JLabel lblEmployee = new JLabel("Employee:");
-        lblEmployee.setFont(new Font("Dialog", Font.BOLD, 16));
-        lblEmployee.setForeground(SystemColor.controlLtHighlight);
-        lblEmployee.setBounds(150, 150, 135, 30);
-        add(lblEmployee);
-
-        String[] employees = {"Employee 1", "Employee 2", "Employee 3"}; // Example data
-        cboEmployee = new JComboBox<>(employees);
-        cboEmployee.setBounds(318, 150, 300, 30);
-        add(cboEmployee);
-
-        // Pet Owner Dropdown
-        JLabel lblPetOwner = new JLabel("Pet Owner:");
-        lblPetOwner.setFont(new Font("Dialog", Font.BOLD, 16));
-        lblPetOwner.setForeground(SystemColor.controlLtHighlight);
-        lblPetOwner.setBounds(150, 190, 135, 30);
-        add(lblPetOwner);
-
-        String[] petOwners = {"Owner 1", "Owner 2", "Owner 3"}; // Example data
-        cboPetOwner = new JComboBox<>(petOwners);
-        cboPetOwner.setBounds(318, 190, 300, 30);
-        add(cboPetOwner);
-
-        // Radio Buttons for Cat or Dog
-        rdbtnCat = new JRadioButton("Cat");
-        rdbtnCat.setForeground(SystemColor.controlLtHighlight);
-        rdbtnCat.setBackground(new Color(0, 128, 128));
-        rdbtnCat.setBounds(150, 230, 100, 30);
-        rdbtnCat.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                toggleDropdowns(true);
-            }
-        });
-        add(rdbtnCat);
-
-        rdbtnDog = new JRadioButton("Dog");
-        rdbtnDog.setForeground(SystemColor.controlLtHighlight);
-        rdbtnDog.setBackground(new Color(0, 128, 128));
-        rdbtnDog.setBounds(250, 230, 100, 30);
-        rdbtnDog.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                toggleDropdowns(false);
-            }
-        });
-        add(rdbtnDog);
-
-        // Group the radio buttons
-        petTypeGroup = new ButtonGroup();
-        petTypeGroup.add(rdbtnCat);
-        petTypeGroup.add(rdbtnDog);
-
-        // Cat Dropdown
-        JLabel lblCat = new JLabel("Select Cat:");
-        lblCat.setFont(new Font("Dialog", Font.BOLD, 16));
-        lblCat.setForeground(SystemColor.controlLtHighlight);
-        lblCat.setBounds(150, 270, 100, 30);
-        add(lblCat);
-
-        String[] cats = {"Tom", "Whiskers", "Fluffy"}; // Example data
-        cboCat = new JComboBox<>(cats);
-        cboCat.setBounds(318, 270, 300, 30);
-        cboCat.setEnabled(false); // Initially disabled
-        add(cboCat);
-
-        // Dog Dropdown
-        JLabel lblDog = new JLabel("Select Dog:");
-        lblDog.setFont(new Font("Dialog", Font.BOLD, 16));
-        lblDog.setForeground(SystemColor.controlLtHighlight);
-        lblDog.setBounds(150, 310, 135, 30);
-        add(lblDog);
-
-        String[] dogs = {"Rex", "Buddy", "Max"}; // Example data
-        cboDog = new JComboBox<>(dogs);
-        cboDog.setBounds(318, 310, 300, 30);
-        cboDog.setEnabled(false); // Initially disabled
-        add(cboDog);
-
-        // Sale Date
-        JLabel lblSaleDate = new JLabel("Sale Date:");
-        lblSaleDate.setFont(new Font("Dialog", Font.BOLD, 16));
-        lblSaleDate.setForeground(SystemColor.controlLtHighlight);
-        lblSaleDate.setBounds(150, 350, 150, 30);
-        add(lblSaleDate);
-
-        lblSaleDate = new JLabel(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
-        lblSaleDate.setFont(new Font("Dialog", Font.PLAIN, 16));
-        lblSaleDate.setForeground(SystemColor.controlLtHighlight);
-        lblSaleDate.setBounds(318, 350, 300, 30);
-        add(lblSaleDate);
-
-        // Price Field
-        JLabel lblPrice = new JLabel("Price:");
-        lblPrice.setFont(new Font("Dialog", Font.BOLD, 16));
-        lblPrice.setForeground(SystemColor.controlLtHighlight);
-        lblPrice.setBounds(150, 390, 100, 30);
-        add(lblPrice);
-
-        txtPrice = new JTextField();
-        txtPrice.setBounds(318, 390, 300, 30);
-        add(txtPrice);
-
-        // Buttons
-        JButton btnDisplay = new JButton("Display");
-        btnDisplay.setFont(new Font("Dialog", Font.BOLD, 16));
-        btnDisplay.setBounds(150, 460, 150, 40);
-        add(btnDisplay);
+        table = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setEnabled(false);
+        add(scrollPane, BorderLayout.CENTER); 
+        scrollPane.setBounds(61, 95, 678, 310);
+        add(scrollPane);
+        
+        JLabel lblSaleRecord = new JLabel("Sale Record");
+        lblSaleRecord.setForeground(new Color(255, 255, 255));
+        lblSaleRecord.setFont(new Font("Dialog", Font.BOLD, 20));
+        lblSaleRecord.setBounds(311, 51, 181, 24);
+        add(lblSaleRecord);
 
         JButton btnBack = new JButton("Back");
         btnBack.setFont(new Font("Dialog", Font.BOLD, 16));
-        btnBack.setBounds(468, 460, 150, 40);
+        btnBack.setBounds(590, 429, 150, 40);
         btnBack.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(cardPanel, "Sale"); // Change "Sale" to the actual name of the main panel
             }
         });
         add(btnBack);
-
-        // Default state: Cat radio button selected
-        rdbtnCat.setSelected(true);
-        toggleDropdowns(true); // Enable the Cat dropdown by default
+        // Load sales data
+        loadSalesData();
     }
 
-    private void toggleDropdowns(boolean showCat) {
-        cboCat.setEnabled(showCat);
-        cboDog.setEnabled(!showCat);
+    private void loadSalesData() {
+        SwingUtilities.invokeLater(() -> {
+            try {
+                // API URL to fetch all sales records
+                URL url = new URL("http://localhost:8080/animalRescue/sale/getall");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setRequestProperty("Accept", "application/json");
+
+                int responseCode = connection.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    StringBuilder response = new StringBuilder();
+                    try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"))) {
+                        String line;
+                        while ((line = in.readLine()) != null) {
+                            response.append(line);
+                        }
+                    }
+
+                    // Parse the response into JSON array
+                    JSONArray salesArray = new JSONArray(response.toString());
+                    tableModel.setRowCount(0); // Clear existing rows
+
+                    // Populate table model with sales data
+                    for (int i = 0; i < salesArray.length(); i++) {
+                        JSONObject saleObject = salesArray.getJSONObject(i);
+
+                        String saleId = saleObject.optString("id", "N/A");
+                        String applicantName = getApplicantName(saleObject.optJSONObject("applicant"));
+                        String employeeName = getEmployeeName(saleObject.optJSONObject("employee"));
+                        String saleDate = saleObject.optString("saleDate", "N/A");
+                        double amount = saleObject.optDouble("price", 0.0);
+
+                        // Add row to the table model
+                        tableModel.addRow(new Object[]{saleId, applicantName, employeeName, saleDate, amount});
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error: Unable to fetch sales data. Response code: " + responseCode);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            }
+        });
+    }
+
+    private String getApplicantName(JSONObject applicantJson) {
+        if (applicantJson != null) {
+        	  String applicantId = applicantJson.optString("id", "N/A");
+              String applicationDate = applicantJson.optString("applicationDate", "N/A");
+              return applicantId + " - " + applicationDate;
+            
+        }
+        return "N/A";
+    }
+
+    private String getEmployeeName(JSONObject employeeJson) {
+        if (employeeJson != null) {
+        	String firstName = employeeJson.optString("firstName", "N/A");
+            String lastName = employeeJson.optString("lastName", "N/A");
+            return firstName + " " + lastName;
+        }
+        return "N/A";
     }
 }
